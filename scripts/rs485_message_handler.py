@@ -77,7 +77,7 @@ class RS485MessageHandler:
         """loop forever"""
         while not rospy.is_shutdown():
             try:
-                send_rs485_msg = self.queue_to_write.get() # this is blocking
+                send_rs485_msg = self.queue_to_write.get() # this is blocking.
                 if send_rs485_msg:
                     # Pipe to stdout if sniffing
                     if self.sniff:
