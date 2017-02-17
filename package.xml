@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package>
+  <name>interface_rs485</name>
+  <version>0.0.0</version>
+  <description>The rs485 package</description>
+
+  <maintainer email="kevin.coombs.cem@gmail.com">kevin coombs</maintainer>
+
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+</package>
