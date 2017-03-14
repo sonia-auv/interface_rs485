@@ -12,6 +12,7 @@
 #    --sniff to log the input from the serial port to stdout
 
 # import os
+import random
 import serial
 import socket
 import sys
@@ -29,9 +30,9 @@ class RS485Msg:
     def __init__(self, slave):
         self.start = 0x3A
         self.slave = slave
-        self.command = 0x01
-        self.nbByte = 0x01
-        self.data = [0x01]*256
+        self.command = 0x00  # on envoie la commande qui demande l'etat de la switch mission
+        self.nbByte = 0x0F
+        self.data = [0x08]*self.nbByte
         self.end = 0x0D
         self.checksum = self.start + self.slave + self.command + 1 + self.nbByte + self.data[0] + self.end
 
@@ -128,23 +129,28 @@ class RS485MessageHandler:
         self.queue_to_write.put(send_rs485_msg)
 
     def write_data_to_rs485(self, send_rs485_msg):
-        data = range(send_rs485_msg.nbByte+7)
-        i = 0
+        data = list()
 
-        data[0] = send_rs485_msg.start
-        data[1] = send_rs485_msg.slave
-        data[2] = send_rs485_msg.command
-        data[3] = send_rs485_msg.nbByte
-        while i < send_rs485_msg.nbByte:
-            data[i+4] = send_rs485_msg.data[i]
-            i += 1
-        checksum = send_rs485_msg.start + send_rs485_msg.slave + send_rs485_msg.command + send_rs485_msg.nbByte\
-            + send_rs485_msg.data[0] + send_rs485_msg.end
-        data[i + 4] = checksum / 16
-        data[i + 5] = checksum % 16
-        data[i + 6] = send_rs485_msg.end
+        data.append(send_rs485_msg.start)
+        data.append(send_rs485_msg.slave)
+        data.append(send_rs485_msg.command)
+        data.append(send_rs485_msg.nbByte)
+        checksum = 0
+        for data_byte in send_rs485_msg.data:
+            data.append(data_byte)
+            checksum += data_byte
+        checksum += send_rs485_msg.start + send_rs485_msg.slave + send_rs485_msg.command + send_rs485_msg.nbByte\
+            + send_rs485_msg.end
+        data.append((checksum >> 8) & 0xFF)
+        data.append(checksum & 0xFF)
+        data.append(send_rs485_msg.end)
 
         self.serial.write(data)
+        gen = random.Random()
+        if gen.random() > 0.5:
+            junk = gen.randint(0, 255)
+            print "writing junk: {}".format(junk)
+            self.serial.write([junk])
         # raw_input(data)
         pass
 
@@ -162,15 +168,18 @@ class RS485MessageHandler:
                 self.receive_rs485_msg.nbByte = self.int_lst[3]
                 if len(self.int_lst) >= 7 + self.receive_rs485_msg.nbByte:
                     k = 0
+                    checksum_calc = 0x3A + self.receive_rs485_msg.slave + self.receive_rs485_msg.command +\
+                        self.receive_rs485_msg.nbByte + 0x0D
                     while k < self.receive_rs485_msg.nbByte:
                         self.receive_rs485_msg.data[k] = self.int_lst[4+k]
+                        checksum_calc += self.int_lst[4+k]
                         k += 1
-                    self.receive_rs485_msg.checksum = self.int_lst[4+k] + 16 * self.int_lst[5+k]
+                    checksum_calc &= 0xFFFF
+                    self.receive_rs485_msg.checksum = self.int_lst[4+k] << 8 | self.int_lst[5+k]
                     self.receive_rs485_msg.end = self.int_lst[6+k]
-                    checksum_calc = 0x3A + self.receive_rs485_msg.slave + self.receive_rs485_msg.command +\
-                        self.receive_rs485_msg.nbByte+self.receive_rs485_msg.data[0] + 0x0D
                     if self.receive_rs485_msg.start == 0x3A and self.receive_rs485_msg.end == 0x0D and\
                             self.receive_rs485_msg.checksum == checksum_calc:
+                        print "banana"
                         for i in range(1, self.receive_rs485_msg.nbByte + 7):
                             self.int_lst.pop(0)
                         ma_mission = MissionSwitchMsg()
@@ -201,7 +210,7 @@ def initialize_options():
         """)
     parser.add_option("-p", "--port", dest="port",
                       help="port, a number (default 0) or a device name (deprecated option)",
-                      default="/dev/ttyUSB2")
+                      default="/dev/ttyUSB0")
     parser.add_option("-b", "--baud", dest="baudrate", action="store",
                       type='int',
                       help="set baudrate, default 9600", default=9600)
