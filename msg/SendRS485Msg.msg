@@ -1,7 +1,7 @@
 # SLAVE ID
 
 uint8 SLAVE_powersupply = 2
-uint8 SLAVE_killMission = 3
+uint8 SLAVE_killMission = 32
 uint8 SLAVE_ISI_1 = 4
 uint8 SLAVE_ISI_2 = 4
 
