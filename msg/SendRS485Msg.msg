@@ -2,6 +2,8 @@
 
 uint8 SLAVE_powersupply0 = 48
 uint8 SLAVE_powersupply1 = 49
+uint8 SLAVE_powersupply2 = 50
+uint8 SLAVE_powersupply3 = 51
 uint8 SLAVE_killMission = 32
 uint8 SLAVE_ISI_0 = 16
 uint8 SLAVE_ISI_1 = 17
@@ -26,8 +28,13 @@ uint8 CMD_PS_C12	  		=5
 uint8 CMD_PS_temperature	=6
 uint8 CMD_PS_VBatt		    =7
 
-#define de ISI
+ #define de ISI
 uint8 CMD_ISI_power = 0
+
+uint8 CMD_PS_ACT_12V        = 16
+uint8 CMD_PS_ACT_16V_1      = 17
+uint8 CMD_PS_ACT_16V_2      = 18
+
 
 uint8 CMD_POWERSUPPLY_action1 = 2
 
