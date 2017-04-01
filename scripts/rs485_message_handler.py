@@ -179,6 +179,7 @@ class RS485MessageHandler:
                 receive_rs485_msg.slave = self.int_lst[1]
                 receive_rs485_msg.command = self.int_lst[2]
                 receive_rs485_msg.nbByte = self.int_lst[3]
+
                 if len(self.int_lst) >= 7 + receive_rs485_msg.nbByte:
                     k = 0
                     checksum_calc = 0x3A + receive_rs485_msg.slave + receive_rs485_msg.command +\
@@ -198,6 +199,7 @@ class RS485MessageHandler:
                     if receive_rs485_msg.start == 0x3A and receive_rs485_msg.end == 0x0D and\
                             receive_rs485_msg.checksum == checksum_calc:
                         # print "banana"
+                        # print self.int_lst
                         for i in range(1, receive_rs485_msg.nbByte + 7):
                             self.int_lst.pop(0)
                         # ma_mission = MissionSwitchMsg()
@@ -208,12 +210,13 @@ class RS485MessageHandler:
                         mon_msg.data = receive_rs485_msg.data
 
                         self.pub.publish(mon_msg)  # on envoie le message a tous les subscriber
-
+                        print "slave %d , cmd %d , data %s." % (mon_msg.slave, mon_msg.cmd, str(mon_msg.data).strip('[]'))
                         # pour tester dans la console
-                        if receive_rs485_msg.command == 0x01:
-                            print("kill    = %d" % receive_rs485_msg.data[0])
-                        if receive_rs485_msg.command == 0x00:
-                            print("mission = %d" % receive_rs485_msg.data[0])
+                        #
+                        #if receive_rs485_msg.command == 0x06:
+                        #    print('{0:d} , {1:d}'.format(receive_rs485_msg.data[0], receive_rs485_msg.data[1]))
+                        #if receive_rs485_msg.command == 0x00:
+                        #    print("mission = %d" % receive_rs485_msg.data[0])
                     else:
                         self.int_lst.pop(0)
 
