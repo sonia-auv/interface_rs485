@@ -1,0 +1,6 @@
+<launch>
+	<node name="interface_RS485"
+	    pkg="interface_RS485"
+	    type="interface_RS485_handler"
+	    output="screen" />
+</launch>
