@@ -1,0 +1,6 @@
+<launch>
+	<node name="interface_RS485"
+	    pkg="interface_rs485"
+	    type="rs485_message_handler.py"
+	    output="screen" />
+</launch>
