@@ -64,8 +64,11 @@ class RS485MessageHandler:
 
         # sub = rospy.Subscriber('/interface_rs485/SendRS485Msg', SendRS485Msg, self.sendRS485_message_received()
         # sub = rospy.Subscriber('/interface_rs485/SendRS485Msg', bytes, queue_size=100)
+        self.thread_write = threading.Thread(target=self.writer)
+        self.thread_write.setDaemon(1)
+        self.thread_write.start()
+        rospy.spin()
 
-        self.writer()  # This is blocking
         # sub.unregister()
 
     def cmd_line_test(self):
@@ -239,7 +242,7 @@ def initialize_options():
                       default="/dev/ttyUSB0")
     parser.add_option("-b", "--baud", dest="baudrate", action="store",
                       type='int',
-                      help="set baudrate, default 9600", default=9600)
+                      help="set baudrate, default 115200", default=115200)
     parser.add_option("", "--parity", dest="parity", action="store",
                       help="set parity, one of [N, E, O], default=N",
                       default='N')
