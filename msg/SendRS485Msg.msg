@@ -5,7 +5,7 @@ uint8 SLAVE_powersupply1 = 49
 uint8 SLAVE_powersupply2 = 50
 uint8 SLAVE_powersupply3 = 51
 uint8 SLAVE_killMission = 32
-uint8 SLAVE_ISI_0 = 16
+uint8 SLAVE_ISI_PWM = 16
 uint8 SLAVE_ISI_1 = 17
 uint8 SLAVE_ISI_2 = 18
 uint8 SLAVE_ISI_3 = 19
@@ -13,6 +13,7 @@ uint8 SLAVE_ISI_4 = 20
 uint8 SLAVE_ISI_5 = 21
 uint8 SLAVE_ISI_6 = 22
 uint8 SLAVE_ISI_7 = 23
+uint8 SLAVE_ISI_8 = 24
 
 #CMD
 # les define de la kill mission switch
