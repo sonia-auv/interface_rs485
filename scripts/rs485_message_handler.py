@@ -75,11 +75,18 @@ class RS485MessageHandler:
     def cmd_line_test(self):
         while 1:
             raw_input("press enter\n")
-
-            msg1 = RS485Msg(0x20, 0x00)
-            msg = RS485Msg(0x20, 0x01)
-            self.queue_to_write.put(msg1)
+            sendRs485Msg = SendRS485Msg()
+            sendRs485Msg.slave = 0x20
+            sendRs485Msg.cmd = 0x00
+            sendRs485Msg.data = [0x00]
+            sendRs485Msg1 = SendRS485Msg()
+            sendRs485Msg1.slave = 0x20
+            sendRs485Msg1.cmd = 0x01
+            sendRs485Msg1.data = [0x00]
+            msg = RS485Msg(sendRs485Msg)
+            msg1 = RS485Msg(sendRs485Msg1)
             self.queue_to_write.put(msg)
+            self.queue_to_write.put(msg1)
 
     def receive_from_subscriber(self, send_rs485_msg):
         msg = RS485Msg(send_rs485_msg)

@@ -365,6 +365,4 @@ if __name__ == '__main__':
 
         print('Port closed', ser)
 
-    self.serversocket.shutdown()
-    self.serversocket.close()
     print("\n--- exit ---")
