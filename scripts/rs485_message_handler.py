@@ -257,7 +257,7 @@ def initialize_options():
         """)
     parser.add_option("-p", "--port", dest="port",
                       help="port, a number (default 0) or a device name (deprecated option)",
-                      default="/dev/ttyS4")
+                      default="/dev/ttyS5")
     parser.add_option("-b", "--baud", dest="baudrate", action="store",
                       type='int',
                       help="set baudrate, default 115200", default=115200)
