@@ -60,6 +60,9 @@ class RS485MessageHandler:
         self.thread_read = threading.Thread(target=self.reader)
         self.thread_read.setDaemon(1)
         self.thread_read.start()
+        self.thread_execute_read = threading.Thread(target=self.parse_data_from_rs485_and_send_msg)
+        self.thread_execute_read.setDaemon(1)
+        self.thread_execute_read.start()
         #self.thread_test = threading.Thread(target=self.cmd_line_test)
         #self.thread_test.start()
 
@@ -115,7 +118,7 @@ class RS485MessageHandler:
                         sys.stdout.flush()
                     if self.count_read_data >= sys.maxint - 2:
                         self.count_read_data = 0
-                    self.new_data_read_from_rs485(data)
+                    self.add_data_read_from_rs485_to_list(data)
 
             except IOError, msg:
                 print(msg)
@@ -173,57 +176,52 @@ class RS485MessageHandler:
         # raw_input(data)
         pass
 
-    def new_data_read_from_rs485(self, data):
-
-
-        # data is bytes. accessible via data[0], data[1]
-        # on regarde l'integrite du message si il n'est pas bon on pop un byte
-        for x in data:
-            self.int_lst.append(ord(x))
-        if len(self.int_lst) >= 8:
-            while len(self.int_lst) > 0 and self.int_lst[0] != 0x3A:
-                self.int_lst.pop(0)
+    def parse_data_from_rs485_and_send_msg(self):
+        while not rospy.is_shutdown():
             if len(self.int_lst) >= 8:
-                # print self.int_lst
-                receive_rs485_msg = RS485Msg(SendRS485Msg())
-                receive_rs485_msg.start = self.int_lst[0]
-                receive_rs485_msg.slave = self.int_lst[1]
-                receive_rs485_msg.command = self.int_lst[2]
-                receive_rs485_msg.nbByte = self.int_lst[3]
-                # print "banana"
-                if len(self.int_lst) >= 7 + receive_rs485_msg.nbByte:
-                    k = 0
-                    checksum_calc = 0x3A + receive_rs485_msg.slave + receive_rs485_msg.command +\
-                        receive_rs485_msg.nbByte + 0x0D
-                    while k < receive_rs485_msg.nbByte:
-                        receive_rs485_msg.data.append(self.int_lst[4+k])
-                        checksum_calc += self.int_lst[4+k]
-                        k += 1
-                    checksum_calc &= 0xFFFF
+                while len(self.int_lst) > 0 and self.int_lst[0] != 0x3A:
+                    self.int_lst.pop(0)
+                if len(self.int_lst) >= 8:
+                    # print self.int_lst
+                    receive_rs485_msg = RS485Msg(SendRS485Msg())
+                    receive_rs485_msg.start = self.int_lst[0]
+                    receive_rs485_msg.slave = self.int_lst[1]
+                    receive_rs485_msg.command = self.int_lst[2]
+                    receive_rs485_msg.nbByte = self.int_lst[3]
+                    # print "banana"
+                    if len(self.int_lst) >= 7 + receive_rs485_msg.nbByte:
+                        k = 0
+                        checksum_calc = 0x3A + receive_rs485_msg.slave + receive_rs485_msg.command + \
+                                        receive_rs485_msg.nbByte + 0x0D
+                        while k < receive_rs485_msg.nbByte:
+                            receive_rs485_msg.data.append(self.int_lst[4 + k])
+                            checksum_calc += self.int_lst[4 + k]
+                            k += 1
+                        checksum_calc &= 0xFFFF
 
-                    receive_rs485_msg.checksum = self.int_lst[4+k] << 8 | self.int_lst[5+k]
-                    receive_rs485_msg.end = self.int_lst[6+k]
-                    # print self.int_lst[4 + k]
-                    # print self.int_lst[5 + k]
-                    # print receive_rs485_msg.checksum
-                    # print checksum_calc
-                    # print "banana2"
-                    if receive_rs485_msg.start == 0x3A and receive_rs485_msg.end == 0x0D and\
-                            receive_rs485_msg.checksum == checksum_calc:
-                        # print "banana3"
-                        #
-                        # print self.int_lst
-                        for i in range(1, receive_rs485_msg.nbByte + 7):
-                            self.int_lst.pop(0)
-                        # ma_mission = MissionSwitchMsg()
-                        # ma_mission.state = self.receive_rs485_msg.data[0]
-                        mon_msg = SendRS485Msg()
-                        mon_msg.slave = receive_rs485_msg.slave
-                        mon_msg.cmd = receive_rs485_msg.command
-                        mon_msg.data = receive_rs485_msg.data
-                        # print "slave %d , cmd %d , data %d." % (mon_msg.slave, mon_msg.cmd, receive_rs485_msg.data[0])
-                        self.pub.publish(mon_msg)  # on envoie le message a tous les subscriber
-                        # if receive_rs485_msg.nbByte == 4:
+                        receive_rs485_msg.checksum = self.int_lst[4 + k] << 8 | self.int_lst[5 + k]
+                        receive_rs485_msg.end = self.int_lst[6 + k]
+                        # print self.int_lst[4 + k]
+                        # print self.int_lst[5 + k]
+                        # print receive_rs485_msg.checksum
+                        # print checksum_calc
+                        # print "banana2"
+                        if receive_rs485_msg.start == 0x3A and receive_rs485_msg.end == 0x0D and \
+                                        receive_rs485_msg.checksum == checksum_calc:
+                            # print "banana3"
+                            #
+                            # print self.int_lst
+                            for i in range(1, receive_rs485_msg.nbByte + 7):
+                                self.int_lst.pop(0)
+                            # ma_mission = MissionSwitchMsg()
+                            # ma_mission.state = self.receive_rs485_msg.data[0]
+                            mon_msg = SendRS485Msg()
+                            mon_msg.slave = receive_rs485_msg.slave
+                            mon_msg.cmd = receive_rs485_msg.command
+                            mon_msg.data = receive_rs485_msg.data
+                            # print "slave %d , cmd %d , data %d." % (mon_msg.slave, mon_msg.cmd, receive_rs485_msg.data[0])
+                            self.pub.publish(mon_msg)  # on envoie le message a tous les subscriber
+                            # if receive_rs485_msg.nbByte == 4:
                             # v1 = chr(receive_rs485_msg.data[0])
                             # v2 = chr(receive_rs485_msg.data[1])
                             # v3 = chr(receive_rs485_msg.data[2])
@@ -234,14 +232,19 @@ class RS485MessageHandler:
                             ## print "slave %d , cmd %d , data %f." % (mon_msg.slave, mon_msg.cmd, data123[0])
                             # pour tester dans la console
                             #
-                            #if receive_rs485_msg.command == 0x06:
+                            # if receive_rs485_msg.command == 0x06:
                             #    print('{0:d} , {1:d}'.format(receive_rs485_msg.data[0], receive_rs485_msg.data[1]))
-                            #if receive_rs485_msg.command == 0x00:
+                            # if receive_rs485_msg.command == 0x00:
                             #    print("mission = %d" % receive_rs485_msg.data[0])
-                    else:
-                        self.int_lst.pop(0)
+                        else:
+                            self.int_lst.pop(0)
 
-        pass
+    def add_data_read_from_rs485_to_list(self, data):
+        # data is bytes. accessible via data[0], data[1]
+        # on regarde l'integrite du message si il n'est pas bon on pop un byte
+        for x in data:
+            self.int_lst.append(ord(x))
+
 
 
 class PassThroughOptionParser(OptionParser):
