@@ -1,9 +1,9 @@
 # SLAVE ID
 
-uint8 SLAVE_powersupply0 = 48
-uint8 SLAVE_powersupply1 = 49
-uint8 SLAVE_powersupply2 = 50
-uint8 SLAVE_powersupply3 = 51
+uint8 SLAVE_powersupply0 = 49
+uint8 SLAVE_powersupply1 = 50
+uint8 SLAVE_powersupply2 = 51
+uint8 SLAVE_powersupply3 = 52
 uint8 SLAVE_killMission = 32
 uint8 SLAVE_ISI_PWM = 16
 uint8 SLAVE_ISI_1 = 17
@@ -35,6 +35,10 @@ uint8 CMD_ISI_power = 0
 uint8 CMD_PS_ACT_12V        = 16
 uint8 CMD_PS_ACT_16V_1      = 17
 uint8 CMD_PS_ACT_16V_2      = 18
+
+uint8 CMD_PS_CHECK_12V        = 19
+uint8 CMD_PS_CHECK_16V_1      = 20
+uint8 CMD_PS_CHECK_16V_2      = 21
 
 
 uint8 CMD_POWERSUPPLY_action1 = 2
