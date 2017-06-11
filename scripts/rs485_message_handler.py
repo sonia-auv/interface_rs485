@@ -114,7 +114,6 @@ class RS485MessageHandler:
 
                     self.count_read_data += 1
                     if not (self.count_read_data % self.max_read_data_print):
-                        print("read %d data." % self.count_read_data)
                         sys.stdout.flush()
                     if self.count_read_data >= sys.maxint - 2:
                         self.count_read_data = 0
@@ -137,7 +136,6 @@ class RS485MessageHandler:
 
                     self.count_read_data += 1
                     if not (self.count_read_data % self.max_read_data_print):
-                        print("write %d data." % self.count_read_data)
                         sys.stdout.flush()
                     if self.count_read_data >= sys.maxint - 2:
                         self.count_read_data = 0
