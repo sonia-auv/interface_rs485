@@ -96,6 +96,7 @@ class RS485MessageHandler:
         self.queue_to_write.put(msg)
 
     def reader(self):
+        rate = rospy.Rate(100)
         """loop forever and copy serial->socket"""
         while not rospy.is_shutdown():
             try:
@@ -118,7 +119,7 @@ class RS485MessageHandler:
                     if self.count_read_data >= sys.maxint - 2:
                         self.count_read_data = 0
                     self.add_data_read_from_rs485_to_list(data)
-
+                rate.sleep()
             except IOError, msg:
                 print(msg)
                 break
