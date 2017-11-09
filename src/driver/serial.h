@@ -19,6 +19,7 @@ public:
 
 private:
     int fd;
+    int baudrate = 115200;
 };
 
 #endif //INTERFACE_RS485_SERIAL_H
