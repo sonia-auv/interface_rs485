@@ -6,7 +6,7 @@
 
 Serial::Serial(std::string port)
 {
-    fd = open(port.c_str(), O_RDWR | O_NOCTTY | O_NONBLOCK);
+    fd = open(port.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
     if(tty == -1)
     {
         ROS_ERROR("unable to connect to %s", port.c_str());
