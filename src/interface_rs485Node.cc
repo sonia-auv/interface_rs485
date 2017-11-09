@@ -1,4 +1,4 @@
-#include "InterfaceRs485Node.h"
+#include "interface_rs485Node.h"
 #include <ros/ros.h>
 #include <thread>
 #include <mutex>
@@ -54,7 +54,7 @@ namespace interface_rs485
     {
         while(!ros::isShuttingDown())
         {
-            
+
         }
     }
 

@@ -32,9 +32,9 @@ namespace interface_rs485
         ros::NodeHandlePtr nh;
         Serial serialConnection;
 
-        std::queue<interface_rs485::ConstPtr> writerQueue;
+        std::queue<SendRS485Msg::ConstPtr> writerQueue;
 
-        ros::Time timestamp
+        ros::Time timestamp;
     };
 }
 
