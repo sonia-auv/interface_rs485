@@ -9,7 +9,7 @@ namespace interface_rs485
 
     // node Construtor
     InterfaceRs485Node::InterfaceRs485Node(const ros::NodeHandlePtr &_nh) :
-    nh(nh)
+    nh(_nh)
     {
         serialConnection = Serial("/dev/ttyS5");
         ros::Publisher transmiter = nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataTx", 100);

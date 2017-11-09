@@ -2,7 +2,7 @@
 #define INTERFACE_RS485_NODE_H
 
 #include <interface_rs485/SendRS485Msg.h>
-#include "../driver/serial.h"
+#include "driver/serial.h"
 #include <queue>
 #include <string>
 
