@@ -1,5 +1,4 @@
 #include "interface_rs485Node.h"
-#include <ros/ros.h>
 #include <thread>
 #include <mutex>
 
@@ -12,8 +11,8 @@ namespace interface_rs485
     nh(_nh)
     {
         serialConnection = Serial("/dev/ttyS5");
-        ros::Publisher transmiter = nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataTx", 100);
-        ros::Suscriber receiver = nh->subscribe("/interface_rs485/dataRx", 100, InterfaceRs485Node::receiveData);
+        publisher = nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataTx", 100);
+        subscriber = nh->subscribe("/interface_rs485/dataRx", 100, InterfaceRs485Node::receiveData);
     }
 
     // node destructor
@@ -50,16 +49,13 @@ namespace interface_rs485
         return s.str();
     }
 
-    void InterfaceRs485Node::transmitData()
-    {
-    }
-
     //callback when the subscriber receive data
     void InterfaceRs485Node::receiveData(const interface_rs485::ConstPtr &receivedData)
     {
         writerQueue.push(receivedData);
     }
 
+    // thread to read the data in the serial port and push it to the parseQueue
     void InterfaceRs485Node::readData()
     {
         while(!ros::isShuttingDown())
@@ -79,7 +75,7 @@ namespace interface_rs485
         }
     }
 
-    // write the data in a message
+    // thread to write the data in the serial port
     void InterfaceRs485Node::writeData()
     {
         while(!ros::isShuttingDown())
@@ -93,18 +89,40 @@ namespace interface_rs485
                     writeCount = 0;
                 }
 
+                int data_size = sizeof(msg_ptr->data) + 7;
+                unsigned char data[data_size];
+                data[0] = msg_ptr->start;
+                data[1] = msg_ptr->slave;
+                data[2] = msg_ptr->cmd;
+                data[3] = sizeof(msg_ptr->data);
+
+                for(int i = 0; i < data[3]; i++)
+                {
+                    data[i+4] = msg_ptr->data[i];
+                }
+
+                data[data_size-2] = msg_ptr->checksum >> 8;
+                data[data_size-1] = msg_ptr->checksum & 0xFF;
+                data[data_size] = msg_ptr->end;
+
+                if(serialConnection.transmit(data) <= 0)
+                {
+                    ROS_INFO("RS485 send an empty packet...")
+                }
+
                 ROS_DEBUG("data in msg number %d: %s", writeCount, InterfaceRs485Node::printMsg(msg_ptr).c_str());
             }
         }
     }
 
+    // thread to parse the data
     void InterfaceRs485Node::parseData()
     {
         while(!ros::isShuttingDown())
         {
             if(parseQueue.size() >= 8)
             {
-                //read until the start or the queue is empty
+                //read until the start there or the queue is empty
                 for(char a = 0; !parseQueue.empty() && a != 0x3A; a = parseQueue.pop());
                 SendRS485Msg msg = SendRS485Msg();
                 msg.start = parseQueue.pop();
@@ -132,7 +150,7 @@ namespace interface_rs485
                 // if the checksum is bad, drop the packet
                 if(checksum == msg.checksum)
                 {
-                    writerQueue.push(msg);
+                    publisher.publish(msg)
                 }
             }
         }

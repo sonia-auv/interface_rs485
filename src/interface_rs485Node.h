@@ -2,6 +2,7 @@
 #define INTERFACE_RS485_NODE_H
 
 #include <interface_rs485/SendRS485Msg.h>
+#include <ros/ros.h>
 #include "driver/serial.h"
 #include <queue>
 #include <string>
@@ -19,7 +20,6 @@ namespace interface_rs485
 
     private:
 
-        void transmitData();
         void receiveData();
         void readData();
         void writeData();
@@ -36,6 +36,9 @@ namespace interface_rs485
 
         std::queue<SendRS485Msg::ConstPtr> writerQueue;
         std::queue<unsigned char> parseQueue;
+
+        ros::Subscriber subscriber;
+        ros::Publisher publisher;
 
         ros::Time timestamp;
     };
