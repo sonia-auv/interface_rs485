@@ -24,6 +24,8 @@ namespace interface_rs485
         void readData();
         void writeData();
 
+        void parseData();
+
         std::string printMsg();
 
         int writeCount = 0;
@@ -33,6 +35,7 @@ namespace interface_rs485
         Serial serialConnection;
 
         std::queue<SendRS485Msg::ConstPtr> writerQueue;
+        std::queue<unsigned char> parseQueue;
 
         ros::Time timestamp;
     };

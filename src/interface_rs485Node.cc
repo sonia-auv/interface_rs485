@@ -32,12 +32,22 @@ namespace interface_rs485
 
             std::thread reader(InterfaceRs485Node::readData);
             std::thread writer(InterfaceRs485Node::writeData);
+            std::thread parser(InterfaceRs485Node::parseData);
 
             reader.join();
             writer.join();
+            parser.join();
 
             r.sleep();
         }
+    }
+
+    // return a std::string to print
+    std::string InterfaceRs485Node::printMsg(interface_rs485::ConstPtr &msg_ptr)
+    {
+        std::stringstream s;
+        s << "slave: " << msg_ptr->slave << "/cmd: " << msg_ptr->cmd << "/data: " << msg_ptr->data << std::endl;
+        return s.str();
     }
 
     void InterfaceRs485Node::transmitData()
@@ -62,6 +72,10 @@ namespace interface_rs485
             {
                 readCount = 0;
             }
+            for(int i = 0; i < strlen(data); i++)
+            {
+                parseQueue.push(data[i]);
+            }
         }
     }
 
@@ -84,11 +98,43 @@ namespace interface_rs485
         }
     }
 
-    // return a std::string to print
-    std::string InterfaceRs485Node::printMsg(interface_rs485::ConstPtr &msg_ptr)
+    void InterfaceRs485Node::parseData()
     {
-        std::stringstream s;
-        s << "slave: " << msg_ptr->slave << "/cmd: " << msg_ptr->cmd << "/data: " << msg_ptr->data << std::endl;
-        return s.str();
+        while(!ros::isShuttingDown())
+        {
+            if(parseQueue.size() >= 8)
+            {
+                //read until the start or the queue is empty
+                for(char a = 0; !parseQueue.empty() && a != 0x3A; a = parseQueue.pop());
+                SendRS485Msg msg = SendRS485Msg();
+                msg.start = parseQueue.pop();
+                msg.slave = parseQueue.pop();
+                msg.cmd = parseQueue.pop();
+                unsigned char nbByte = parseQueue.pop();
+                unsigned char data[nbByte];
+
+                // protection to prevent the buffer to read less byte
+                while(parseQueue.size() < nbByte);
+
+                int checksum = 0;
+                for(int i = 0; i < nbByte; i++)
+                {
+                    data[i] = parseQueue.pop();
+                    checksum += data[i];
+                }
+
+                msg.checksum = parseQueue.pop() << 8 | parseQueue.pop();
+                msg.end = parseQueue.pop();
+
+                checksum += (msg.start+msg.slave+msg.cmd);
+                checksum &= 0xFFFF;
+
+                // if the checksum is bad, drop the packet
+                if(checksum == msg.checksum)
+                {
+                    writerQueue.push(msg);
+                }
+            }
+        }
     }
 }
