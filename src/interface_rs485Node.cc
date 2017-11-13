@@ -54,7 +54,14 @@ namespace interface_rs485
     {
         while(!ros::isShuttingDown())
         {
+            const char* data = serialConnection.receive();
+            ROS_INFO("reading: %d bytes", strlen(data));
 
+            readCount++;
+            if(readCount >= std::numeric_limits<int>::max() - 2)
+            {
+                readCount = 0;
+            }
         }
     }
 
@@ -66,7 +73,7 @@ namespace interface_rs485
             if(!writerQueue.empty())
             {
                 interface_rs485::ConstPtr msg_ptr = writerQueue.pop();
-                writeCount += 1;
+                writeCount++;
                 if(writeCount >= std::numeric_limits<int>::max() - 2)
                 {
                     writeCount = 0;

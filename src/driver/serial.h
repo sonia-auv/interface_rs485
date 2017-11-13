@@ -5,7 +5,8 @@
 #ifndef INTERFACE_RS485_SERIAL_H
 #define INTERFACE_RS485_SERIAL_H
 
-#include <string>
+#include <string.h>
+#include <termios.h>
 #include <unistd.h>
 #include <ros/ros.h>
 
@@ -18,8 +19,9 @@ public:
     int transmit(const char* data);
 
 private:
+
+    struct termios options;
     int fd;
-    int baudrate = 115200;
 };
 
 #endif //INTERFACE_RS485_SERIAL_H

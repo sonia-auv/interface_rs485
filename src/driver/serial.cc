@@ -7,7 +7,7 @@
 Serial::Serial(std::string port)
 {
     fd = open(port.c_str(), O_RDWR | O_NOCTTY | O_NDELAY);
-    if(tty == -1)
+    if(fd == -1)
     {
         ROS_ERROR("unable to connect to %s", port.c_str());
     }
@@ -15,6 +15,18 @@ Serial::Serial(std::string port)
     {
         ROS_INFO("connection to %s succeed", port.c_str())
     }
+
+    fcntl(fd, F_SETFL, 0);
+
+    tcgetattr(fd, &options);
+
+    // setup le baudrate
+    cfsetispeed(&options, B115200);
+    cfsetospeed(&options, B115200);
+
+    options.c_cflag |= (CLOCAL | CREAD);
+
+    tcsetattr(fd, TCSANOW, &options);
 }
 
 Serial::~Serial()
@@ -22,17 +34,27 @@ Serial::~Serial()
     close(fd);
 }
 
-const char* Serial::receive(int length)
+const char* Serial::receive()
 {
     ROS_DEBUG("interface_RS485 receive data")
-    char data[length];
-    if(read(fd, &data, sizeof(data)) != -1)
+
+    //blocking call
+    while(1)
     {
-        return data;
-    }
-    else
-    {
-        return "";
+        int length = ioctl(fd, FIONREAD, &bytes);
+
+        if (length > 0)
+        {
+            char data[length];
+            if(read(fd, &data, sizeof(data)) != -1)
+            {
+                return data;
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 }
 
