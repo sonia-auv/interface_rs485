@@ -5,17 +5,18 @@
 #ifndef INTERFACE_RS485_SERIAL_H
 #define INTERFACE_RS485_SERIAL_H
 
+#include <string>
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
-#include <ros/ros.h>
+
 
 class Serial{
 public:
     Serial(std::string port);
     ~Serial();
 
-    const char* receive(int length);
+    std::string receive();
     int transmit(const char* data);
 
 private:

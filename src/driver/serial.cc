@@ -3,6 +3,9 @@
 //
 
 #include "serial.h"
+#include <fcntl.h>
+#include <ros/ros.h>
+#include <sys/ioctl.h>
 
 Serial::Serial(std::string port)
 {
@@ -13,7 +16,7 @@ Serial::Serial(std::string port)
     }
     else
     {
-        ROS_INFO("connection to %s succeed", port.c_str())
+        ROS_INFO("connection to %s succeed", port.c_str());
     }
 
     fcntl(fd, F_SETFL, 0);
@@ -34,13 +37,14 @@ Serial::~Serial()
     close(fd);
 }
 
-const char* Serial::receive()
+std::string Serial::receive()
 {
-    ROS_DEBUG("interface_RS485 receive data")
+    ROS_DEBUG("interface_RS485 receive data");
 
     //blocking call
     while(1)
     {
+        int bytes;
         int length = ioctl(fd, FIONREAD, &bytes);
 
         if (length > 0)
@@ -60,6 +64,6 @@ const char* Serial::receive()
 
 int Serial::transmit(const char* data)
 {
-    ROS_DEBUG("interface_RS485 transmit data")
+    ROS_DEBUG("interface_RS485 transmit data");
     return write(fd, data, strlen(data));
 }

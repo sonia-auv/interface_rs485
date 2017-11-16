@@ -76,7 +76,7 @@ include_directories(
 #==========================================================================
 # C R E A T E   E X E C U T A B L E
 
-add_executable(${PROJECT_NAME}_node ${provider_RS485_SRC_DIR}/main.cc)
+add_executable(${PROJECT_NAME}_node ${provider_RS485_SRC_DIR}/main.cc ${provider_RS485_FILES})
 target_link_libraries(${PROJECT_NAME}_node
         ${catkin_LIBRARIES}
         yaml-cpp
