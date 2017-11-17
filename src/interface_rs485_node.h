@@ -7,6 +7,8 @@
 #include <ros/ros.h>
 #include <queue>
 #include <string>
+#include <thread>
+#include <mutex>
 
 namespace interface_rs485
 {
@@ -22,7 +24,7 @@ namespace interface_rs485
     private:
 
         void receiveData(const SendRS485Msg::ConstPtr &receivedData);
-        void readData();
+        void readData(void);
         void writeData();
 
         void parseData();
@@ -33,6 +35,12 @@ namespace interface_rs485
 
         ros::NodeHandlePtr nh;
         Serial serialConnection;
+        std::thread reader;
+        std::thread writer;
+        std::thread parser;
+
+        std::mutex writerMutex;
+        std::mutex parserMutex;
 
         std::queue<SendRS485Msg::ConstPtr> writerQueue;
         std::queue<unsigned char> parseQueue;

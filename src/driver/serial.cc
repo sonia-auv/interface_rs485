@@ -13,7 +13,7 @@ Serial::Serial(std::string port)
     if(fd == -1)
     {
         ROS_ERROR("unable to connect to %s", port.c_str());
-        exit(128);
+        ros::shutdown();
     }
     else
     {
