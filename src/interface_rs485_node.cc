@@ -9,13 +9,15 @@ namespace interface_rs485
 
     // node Construtor
     InterfaceRs485Node::InterfaceRs485Node(const ros::NodeHandlePtr &_nh)
-    : nh(_nh), serialConnection("/dev/ttyUSB0"),    reader(std::bind(&InterfaceRs485Node::readData, this)),
-                                                    writer(std::bind(&InterfaceRs485Node::writeData, this)),
-                                                    parser(std::bind(&InterfaceRs485Node::parseData, this))
+    : nh(_nh), serialConnection("/dev/ttyUSB0")
     {
         ROS_INFO("good");
         publisher = nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataTx", 100);
         subscriber = nh->subscribe("/interface_rs485/dataRx", 100, &InterfaceRs485Node::receiveData, this);
+
+        reader = std::thread(std::bind(&InterfaceRs485Node::readData, this));
+        writer = std::thread(std::bind(&InterfaceRs485Node::writeData, this));
+        parser = std::thread(std::bind(&InterfaceRs485Node::parseData, this));
     }
 
     // node destructor
@@ -36,15 +38,16 @@ namespace interface_rs485
         }
     }
 
-    int InterfaceRs485Node::calculateCheckSum(unsigned char slave, unsigned char cmd, int nbByte, char* data)
+    //calculate the checksum
+    uint16_t InterfaceRs485Node::calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data)
     {
-        unsigned int check = 0x3A+slave+cmd+0x0D;
-        for(int i = 0; i < nbByte; i++)
+        uint16_t check = (uint16_t)(0x3A+slave+cmd+nbByte+0x0D);
+        for(uint8_t i = 0; i < nbByte; i++)
         {
-            check += (unsigned char)data[i];
+            check += (uint8_t)data[i];
         }
 
-        return check & 0xFFFF;
+        return check;
     }
 
     //callback when the subscriber receive data
@@ -62,18 +65,18 @@ namespace interface_rs485
         ROS_INFO("begin the read data threads");
         while(!ros::isShuttingDown())
         {
-            ROS_INFO("read thread");
-            const char* data = serialConnection.receive().c_str();
-            ROS_INFO("reading: %lu bytes", strlen(data));
+            std::string data = serialConnection.receive();
+            ROS_INFO("reading: %lu bytes", data.size());
             readCount++;
             if(readCount >= std::numeric_limits<int>::max() - 2)
             {
                 readCount = 0;
             }
-            for(unsigned int i = 0; i < strlen(data); i++)
+
+            for(unsigned int i = 0; i < data.size(); i++)
             {
                 parserMutex.lock();
-                parseQueue.push(data[i]);
+                parseQueue.push((uint8_t)data[i]);
                 parserMutex.unlock();
             }
         }
@@ -98,22 +101,22 @@ namespace interface_rs485
                     writeCount = 0;
                 }
 
-                int data_size = sizeof(msg_ptr->data) + 7;
-                unsigned char data[data_size];
+                unsigned long data_size = msg_ptr->data.size() + 7;
+                uint8_t data[data_size];
                 data[0] = 0x3A;
                 data[1] = msg_ptr->slave;
                 data[2] = msg_ptr->cmd;
-                data[3] = sizeof(msg_ptr->data);
+                data[3] = (uint8_t)msg_ptr->data.size();
 
                 for(int i = 0; i < data[3]; i++)
                 {
                     data[i+4] = msg_ptr->data[i];
                 }
 
-                int checksum = calculateCheckSum(data[1], data[2], data_size, (char*) &data[4]);
+                uint16_t checksum = calculateCheckSum(data[1], data[2], data[3], (char*) &data[4]);
 
-                data[data_size-2] = checksum >> 8;
-                data[data_size-1] = checksum & 0xFF;
+                data[data_size-2] = (uint8_t)(checksum >> 8);
+                data[data_size-1] = (uint8_t)(checksum & 0xFF);
                 data[data_size] = 0x0D;
 
                 if(serialConnection.transmit((const char*)data) <= 0)
@@ -174,7 +177,7 @@ namespace interface_rs485
                     parseQueue.pop();
                 }
 
-                int checksum = parseQueue.front() << 8;
+                uint16_t checksum = (uint16_t)(parseQueue.front()<<8);
                 parseQueue.pop();
 
                 checksum += parseQueue.front();
@@ -185,7 +188,7 @@ namespace interface_rs485
 
                 parserMutex.unlock();
 
-                int calc_checksum = calculateCheckSum(slave_temp, cmd_temp, nbByte, data_temp) & 0xFFFF;
+                uint16_t calc_checksum = calculateCheckSum(slave_temp, cmd_temp, nbByte, data_temp);
 
                 // if the checksum is bad, drop the packet
                 if(checksum == calc_checksum)

@@ -28,7 +28,7 @@ namespace interface_rs485
         void writeData();
 
         void parseData();
-        int calculateCheckSum(unsigned char slave, unsigned char cmd, int nbByte, char* data);
+        uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data);
 
         int writeCount = 0;
         int readCount = 0;
@@ -43,7 +43,7 @@ namespace interface_rs485
         std::mutex parserMutex;
 
         std::queue<SendRS485Msg::ConstPtr> writerQueue;
-        std::queue<unsigned char> parseQueue;
+        std::queue<uint8_t> parseQueue;
 
         ros::Subscriber subscriber;
         ros::Publisher publisher;
