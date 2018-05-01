@@ -13,12 +13,9 @@ namespace interface_rs485
                                                     writer(std::bind(&InterfaceRs485Node::writeData, this)),
                                                     parser(std::bind(&InterfaceRs485Node::parseData, this))
     {
+        ROS_INFO("good");
         publisher = nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataTx", 100);
         subscriber = nh->subscribe("/interface_rs485/dataRx", 100, &InterfaceRs485Node::receiveData, this);
-
-        reader.join();
-        writer.join();
-        parser.join();
     }
 
     // node destructor
@@ -41,7 +38,7 @@ namespace interface_rs485
 
     int InterfaceRs485Node::calculateCheckSum(unsigned char slave, unsigned char cmd, int nbByte, char* data)
     {
-        int check = 0x3A+slave+cmd+nbByte+0x0D;
+        unsigned int check = 0x3A+slave+cmd+0x0D;
         for(int i = 0; i < nbByte; i++)
         {
             check += (unsigned char)data[i];
@@ -53,6 +50,7 @@ namespace interface_rs485
     //callback when the subscriber receive data
     void InterfaceRs485Node::receiveData(const SendRS485Msg::ConstPtr &receivedData)
     {
+        ROS_INFO("receive a rs485 data");
         writerMutex.lock();
         writerQueue.push(receivedData);
         writerMutex.unlock();
@@ -61,11 +59,12 @@ namespace interface_rs485
     // thread to read the data in the serial port and push it to the parseQueue
     void InterfaceRs485Node::readData()
     {
+        ROS_INFO("begin the read data threads");
         while(!ros::isShuttingDown())
         {
+            ROS_INFO("read thread");
             const char* data = serialConnection.receive().c_str();
             ROS_INFO("reading: %lu bytes", strlen(data));
-
             readCount++;
             if(readCount >= std::numeric_limits<int>::max() - 2)
             {
@@ -83,10 +82,10 @@ namespace interface_rs485
     // thread to write the data in the serial port
     void InterfaceRs485Node::writeData()
     {
+        ROS_INFO("begin the write data threads");
         while(!ros::isShuttingDown())
         {
             writerMutex.lock();
-            int i = writerQueue.size();
             if(!writerQueue.empty())
             {
                 SendRS485Msg::ConstPtr msg_ptr = writerQueue.front();
@@ -120,6 +119,9 @@ namespace interface_rs485
                 if(serialConnection.transmit((const char*)data) <= 0)
                 {
                     ROS_INFO("RS485 send an empty packet...");
+                } else
+                {
+                    ROS_INFO("RS485 send a normal packet");
                 }
             }
             else
@@ -132,6 +134,7 @@ namespace interface_rs485
     // thread to parse the data
     void InterfaceRs485Node::parseData()
     {
+        ROS_INFO("begin the parse data threads");
         while(!ros::isShuttingDown())
         {
             parserMutex.lock();

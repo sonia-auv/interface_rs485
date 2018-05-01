@@ -40,7 +40,7 @@ Serial::~Serial()
 
 std::string Serial::receive()
 {
-    ROS_DEBUG("interface_RS485 receive data");
+    ROS_INFO("interface_RS485 receive data");
 
     //blocking call
     while(1)
@@ -65,6 +65,6 @@ std::string Serial::receive()
 
 int Serial::transmit(const char* data)
 {
-    ROS_DEBUG("interface_RS485 transmit data");
+    ROS_INFO("interface_RS485 transmit data");
     return write(fd, data, strlen(data));
 }
