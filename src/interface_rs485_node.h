@@ -24,7 +24,7 @@ namespace interface_rs485
     private:
 
         void receiveData(const SendRS485Msg::ConstPtr &receivedData);
-        void readData(void);
+        void readData();
         void writeData();
 
         void parseData();

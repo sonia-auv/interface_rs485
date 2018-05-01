@@ -65,8 +65,8 @@ namespace interface_rs485
         ROS_INFO("begin the read data threads");
         while(!ros::isShuttingDown())
         {
+            ros::Duration(0.001).sleep();
             std::string data = serialConnection.receive();
-            ROS_INFO("reading: %lu bytes", data.size());
             readCount++;
             if(readCount >= std::numeric_limits<int>::max() - 2)
             {
@@ -88,6 +88,7 @@ namespace interface_rs485
         ROS_INFO("begin the write data threads");
         while(!ros::isShuttingDown())
         {
+            ros::Duration(0.001).sleep();
             writerMutex.lock();
             if(!writerQueue.empty())
             {
@@ -137,6 +138,7 @@ namespace interface_rs485
         ROS_INFO("begin the parse data threads");
         while(!ros::isShuttingDown())
         {
+            ros::Duration(0.001).sleep();
             parserMutex.lock();
             if(parseQueue.size() >= 8)
             {

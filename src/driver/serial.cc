@@ -20,7 +20,7 @@ Serial::Serial(std::string port)
         ROS_INFO("connection to %s succeed", port.c_str());
     }
 
-    fcntl(fd, F_SETFL, 0);
+    fcntl(fd, F_SETFL, O_NDELAY);
 
     tcgetattr(fd, &options);
 
@@ -43,22 +43,19 @@ std::string Serial::receive()
     ROS_DEBUG("interface_RS485 receive data");
 
     //blocking call
-    while(1)
-    {
-        int bytes;
-        int length = ioctl(fd, FIONREAD, &bytes);
+    int bytes;
+    int length = ioctl(fd, FIONREAD, &bytes);
 
-        if (length > 0)
+    if (length > 0)
+    {
+        char data[length];
+        if(read(fd, &data, sizeof(data)) != -1)
         {
-            char data[length];
-            if(read(fd, &data, sizeof(data)) != -1)
-            {
-                return data;
-            }
-            else
-            {
-                return "";
-            }
+            return std::string(data);
+        }
+        else
+        {
+            return "";
         }
     }
 }
