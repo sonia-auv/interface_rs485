@@ -50,7 +50,7 @@ namespace interface_rs485
     //callback when the subscriber receive data
     void InterfaceRs485Node::receiveData(const SendRS485Msg::ConstPtr &receivedData)
     {
-        ROS_INFO("receive a rs485 data");
+        ROS_DEBUG("receive a rs485 data");
         writerMutex.lock();
         writerQueue.push(receivedData);
         writerMutex.unlock();
@@ -119,9 +119,6 @@ namespace interface_rs485
                 if(serialConnection.transmit((const char*)data) <= 0)
                 {
                     ROS_INFO("RS485 send an empty packet...");
-                } else
-                {
-                    ROS_INFO("RS485 send a normal packet");
                 }
             }
             else
