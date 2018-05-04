@@ -102,7 +102,7 @@ namespace interface_rs485
                     writeCount = 0;
                 }
 
-                unsigned long data_size = msg_ptr->data.size() + 7;
+                unsigned long data_size = msg_ptr->data.size() + 8;
                 uint8_t data[data_size];
                 data[0] = 0x3A;
                 data[1] = msg_ptr->slave;
@@ -116,9 +116,9 @@ namespace interface_rs485
 
                 uint16_t checksum = calculateCheckSum(data[1], data[2], data[3], (char*) &data[4]);
 
-                data[data_size-2] = (uint8_t)(checksum >> 8);
-                data[data_size-1] = (uint8_t)(checksum & 0xFF);
-                data[data_size] = 0x0D;
+                data[data_size-3] = (uint8_t)(checksum >> 8);
+                data[data_size-2] = (uint8_t)(checksum & 0xFF);
+                data[data_size-1] = 0x0D;
 
                 if(serialConnection.transmit((const char*)data) <= 0)
                 {
