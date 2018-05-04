@@ -17,7 +17,7 @@ public:
     ~Serial();
 
     std::string receive();
-    ssize_t transmit(const char* data);
+    ssize_t transmit(const char* data, int string_length);
 
 private:
 
