@@ -43,21 +43,13 @@ std::string Serial::receive()
     ROS_DEBUG("interface_RS485 receive data");
 
     //blocking call
-    int bytes;
-    int length = ioctl(fd, FIONREAD, &bytes);
-
-    if (length > 0)
+    char caracter;
+    std::string data = "";
+    while(read(fd, &caracter, 1) != -1)
     {
-        char data[length];
-        if(read(fd, &data, sizeof(data)) != -1)
-        {
-            return std::string(data);
-        }
-        else
-        {
-            return "";
-        }
+        data += caracter;
     }
+    return data;
 }
 
 ssize_t Serial::transmit(const char* data)

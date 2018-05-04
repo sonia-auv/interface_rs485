@@ -65,7 +65,7 @@ namespace interface_rs485
         ROS_INFO("begin the read data threads");
         while(!ros::isShuttingDown())
         {
-            ros::Duration(0.001).sleep();
+            ros::Duration(0.01).sleep();
             std::string data = serialConnection.receive();
             readCount++;
             if(readCount >= std::numeric_limits<int>::max() - 2)
@@ -88,9 +88,9 @@ namespace interface_rs485
         ROS_INFO("begin the write data threads");
         while(!ros::isShuttingDown())
         {
-            ros::Duration(0.001).sleep();
+            ros::Duration(0.01).sleep();
             writerMutex.lock();
-            if(!writerQueue.empty())
+            while(!writerQueue.empty())
             {
                 SendRS485Msg::ConstPtr msg_ptr = writerQueue.front();
                 writerQueue.pop();
@@ -125,10 +125,7 @@ namespace interface_rs485
                     ROS_INFO("RS485 send an empty packet...");
                 }
             }
-            else
-            {
-                writerMutex.unlock();
-            }
+            writerMutex.unlock();
         }
     }
 
@@ -138,7 +135,7 @@ namespace interface_rs485
         ROS_INFO("begin the parse data threads");
         while(!ros::isShuttingDown())
         {
-            ros::Duration(0.001).sleep();
+            ros::Duration(0.01).sleep();
             parserMutex.lock();
             if(parseQueue.size() >= 8)
             {
@@ -167,7 +164,10 @@ namespace interface_rs485
                 parseQueue.pop();
 
                 // protection to prevent the buffer to read less byte
+                parserMutex.unlock();
                 while(parseQueue.size() < nbByte);
+
+                parserMutex.lock();
 
                 //temp variable to data
                 char data_temp[nbByte];
