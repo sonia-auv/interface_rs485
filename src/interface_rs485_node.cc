@@ -120,7 +120,7 @@ namespace interface_rs485
                 data[data_size-2] = (uint8_t)(checksum & 0xFF);
                 data[data_size-1] = 0x0D;
 
-                ROS_INFO("%0x\n%0x\n%0x\n%0x\n%0x\n%0x\n%0x\n%0x\n", data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
+                ROS_DEBUG("%0x\n%0x\n%0x\n%0x\n%0x\n%0x\n%0x\n%0x\n", data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
 
                 if(serialConnection.transmit((const char*)data, data_size) <= 0)
                 {
