@@ -144,7 +144,17 @@ namespace interface_rs485
                 //read until the start there or the queue is empty
                 while(!parseQueue.empty()) {
                     if(parseQueue.front() != 0x3A)
+                    {
                         parseQueue.pop();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if(parseQueue.empty())
+                {
+                    continue;
                 }
 
                 SendRS485Msg msg = SendRS485Msg();
