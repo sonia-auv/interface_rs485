@@ -154,6 +154,7 @@ namespace interface_rs485
                 }
                 if(parseQueue.empty())
                 {
+                    parserMutex.unlock();
                     continue;
                 }
 
