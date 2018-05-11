@@ -29,7 +29,7 @@ namespace interface_rs485
     // node spin
     void InterfaceRs485Node::Spin()
     {
-        ros::Rate r(100);
+        ros::Rate r(50);
         while(ros::ok())
         {
             ros::spinOnce();
