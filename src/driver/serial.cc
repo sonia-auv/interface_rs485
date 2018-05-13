@@ -42,10 +42,8 @@ std::string Serial::receive()
 {
     ROS_DEBUG("interface_RS485 receive data");
     
-    char caracter[8192] = {0};
-    std::string data = "";
-    read(fd, &caracter, 8191);
-    data += caracter;
+    char data[8192] = {0};
+    read(fd, &data, 8191);
     return data;
 }
 
