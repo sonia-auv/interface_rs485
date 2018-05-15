@@ -66,17 +66,21 @@ namespace interface_rs485
         while(!ros::isShuttingDown())
         {
             ros::Duration(0.01).sleep();
-            std::string data = serialConnection.receive();
+            char data[8192];
+            ssize_t str_len = serialConnection.receive(data, 8192);
             readCount++;
             if(readCount >= std::numeric_limits<int>::max() - 2)
             {
                 readCount = 0;
             }
 
-            for(unsigned int i = 0; i < data.size(); i++)
+            if(str_len != -1)
             {
                 parserMutex.lock();
-                parseQueue.push((uint8_t)data[i]);
+                for(ssize_t i = 0; i < str_len; i++)
+                {
+                    parseQueue.push((uint8_t) data[i]);
+                }
                 parserMutex.unlock();
             }
         }

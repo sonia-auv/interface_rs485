@@ -38,13 +38,11 @@ Serial::~Serial()
     close(fd);
 }
 
-std::string Serial::receive()
+ssize_t Serial::receive(char* data, size_t count)
 {
     ROS_DEBUG("interface_RS485 receive data");
-    
-    char data[8192] = {0};
-    read(fd, &data, 8191);
-    return data;
+
+    return read(fd, data, count);
 }
 
 ssize_t Serial::transmit(const char* data, int string_length)
