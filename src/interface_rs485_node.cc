@@ -106,7 +106,7 @@ namespace interface_rs485
                     writeCount = 0;
                 }
 
-                unsigned long data_size = msg_ptr->data.size() + 7;
+                size_t data_size = msg_ptr->data.size() + 7;
                 uint8_t data[data_size];
                 data[0] = 0x3A;
                 data[1] = msg_ptr->slave;
@@ -146,7 +146,8 @@ namespace interface_rs485
             if(parseQueue.size() >= 8)
             {
                 //read until the start there or the queue is empty
-                while(!parseQueue.empty()) {
+                while(!parseQueue.empty())
+                {
                     if(parseQueue.front() != 0x3A)
                     {
                         parseQueue.pop();
@@ -161,6 +162,15 @@ namespace interface_rs485
                     parserMutex.unlock();
                     continue;
                 }
+
+                //get all the data if poping make it less than 8 byte
+                while(parseQueue.size() < 8)
+                {
+                    parserMutex.unlock();
+                    ros::Duration(0.01).sleep();
+                    parserMutex.lock();
+                }
+
 
                 SendRS485Msg msg = SendRS485Msg();
 
@@ -181,10 +191,12 @@ namespace interface_rs485
                 parseQueue.pop();
 
                 // protection to prevent the buffer to read less byte
-                parserMutex.unlock();
-                while(parseQueue.size() < nbByte);
-
-                parserMutex.lock();
+                while(parseQueue.size() < nbByte)
+                {
+                    parserMutex.unlock();
+                    ros::Duration(0.01).sleep();
+                    parserMutex.lock();
+                }
 
                 //temp variable to data
                 char data_temp[nbByte];

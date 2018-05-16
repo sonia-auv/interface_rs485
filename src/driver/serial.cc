@@ -45,7 +45,7 @@ ssize_t Serial::receive(char* data, size_t count)
     return read(fd, data, count);
 }
 
-ssize_t Serial::transmit(const char* data, int string_length)
+ssize_t Serial::transmit(const char* data, size_t string_length)
 {
     ROS_DEBUG("interface_RS485 transmit data");
     return write(fd, data, string_length);
