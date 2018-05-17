@@ -5,10 +5,9 @@
 
 #include <interface_rs485/SendRS485Msg.h>
 #include <ros/ros.h>
-#include <queue>
 #include <string>
 #include <thread>
-#include <mutex>
+#include <sharedQueue.h>
 
 namespace interface_rs485
 {
@@ -28,6 +27,7 @@ namespace interface_rs485
         void writeData();
 
         void parseData();
+        uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data);
         uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data);
 
         int writeCount = 0;
@@ -39,11 +39,8 @@ namespace interface_rs485
         std::thread writer;
         std::thread parser;
 
-        std::mutex writerMutex;
-        std::mutex parserMutex;
-
-        std::queue<SendRS485Msg::ConstPtr> writerQueue;
-        std::queue<uint8_t> parseQueue;
+        SharedQueue<SendRS485Msg::ConstPtr> writerQueue;
+        SharedQueue<uint8_t> parseQueue;
 
         ros::Subscriber subscriber;
         ros::Publisher publisher;

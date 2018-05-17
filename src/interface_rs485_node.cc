@@ -50,13 +50,22 @@ namespace interface_rs485
         return check;
     }
 
+    uint16_t InterfaceRs485Node::calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data)
+    {
+        uint16_t check = (uint16_t)(0x3A+slave+cmd+nbByte+0x0D);
+        for(uint8_t i = 0; i < nbByte; i++)
+        {
+            check += (uint8_t)data[i];
+        }
+
+        return check;
+    }
+
     //callback when the subscriber receive data
     void InterfaceRs485Node::receiveData(const SendRS485Msg::ConstPtr &receivedData)
     {
         ROS_DEBUG("receive a rs485 data");
-        writerMutex.lock();
-        writerQueue.push(receivedData);
-        writerMutex.unlock();
+        writerQueue.push_back(receivedData);
     }
 
     // thread to read the data in the serial port and push it to the parseQueue
@@ -76,12 +85,10 @@ namespace interface_rs485
 
             if(str_len != -1)
             {
-                parserMutex.lock();
                 for(ssize_t i = 0; i < str_len; i++)
                 {
-                    parseQueue.push((uint8_t) data[i]);
+                    parseQueue.push_back((uint8_t) data[i]);
                 }
-                parserMutex.unlock();
             }
         }
     }
@@ -93,12 +100,9 @@ namespace interface_rs485
         while(!ros::isShuttingDown())
         {
             ros::Duration(0.01).sleep();
-            writerMutex.lock();
             while(!writerQueue.empty())
             {
-                SendRS485Msg::ConstPtr msg_ptr = writerQueue.front();
-                writerQueue.pop();
-                writerMutex.unlock();
+                SendRS485Msg::ConstPtr msg_ptr = writerQueue.get_n_pop_front();
 
                 writeCount++;
                 if(writeCount >= std::numeric_limits<int>::max() - 2)
@@ -131,7 +135,6 @@ namespace interface_rs485
                     ROS_INFO("RS485 send an empty packet...");
                 }
             }
-            writerMutex.unlock();
         }
     }
 
@@ -142,94 +145,45 @@ namespace interface_rs485
         while(!ros::isShuttingDown())
         {
             ros::Duration(0.01).sleep();
-            parserMutex.lock();
-            if(parseQueue.size() >= 8)
+            //read until the start there or the queue is empty
+            while(!parseQueue.empty())
             {
-                //read until the start there or the queue is empty
-                while(!parseQueue.empty())
+                if(parseQueue.front() != 0x3A)
                 {
-                    if(parseQueue.front() != 0x3A)
-                    {
-                        parseQueue.pop();
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    parseQueue.pop_front();
                 }
-                if(parseQueue.empty())
+                else
                 {
-                    parserMutex.unlock();
-                    continue;
-                }
-
-                //get all the data if poping make it less than 8 byte
-                while(parseQueue.size() < 8)
-                {
-                    parserMutex.unlock();
-                    ros::Duration(0.01).sleep();
-                    parserMutex.lock();
-                }
-
-
-                SendRS485Msg msg = SendRS485Msg();
-
-                //pop the unused start data
-                parseQueue.pop();
-
-                //temp variable to slave
-                unsigned char slave_temp = parseQueue.front();
-                msg.slave = parseQueue.front();
-                parseQueue.pop();
-
-                // temp variable to cmd
-                unsigned char cmd_temp = parseQueue.front();
-                msg.cmd = parseQueue.front();
-                parseQueue.pop();
-
-                unsigned char nbByte = parseQueue.front();
-                parseQueue.pop();
-
-                // protection to prevent the buffer to read less byte
-                while(parseQueue.size() < nbByte)
-                {
-                    parserMutex.unlock();
-                    ros::Duration(0.01).sleep();
-                    parserMutex.lock();
-                }
-
-                //temp variable to data
-                char data_temp[nbByte];
-
-                for(int i = 0; i < nbByte; i++)
-                {
-                    msg.data.push_back((unsigned char)parseQueue.front());
-                    data_temp[i] = parseQueue.front();
-                    parseQueue.pop();
-                }
-
-                uint16_t checksum = (uint16_t)(parseQueue.front()<<8);
-                parseQueue.pop();
-
-                checksum += parseQueue.front();
-                parseQueue.pop();
-
-                //pop the unused end data
-                parseQueue.pop();
-
-                parserMutex.unlock();
-
-                uint16_t calc_checksum = calculateCheckSum(slave_temp, cmd_temp, nbByte, data_temp);
-
-                // if the checksum is bad, drop the packet
-                if(checksum == calc_checksum)
-                {
-                    publisher.publish(msg);
+                    break;
                 }
             }
-            else
+
+            SendRS485Msg msg = SendRS485Msg();
+
+            //pop the unused start data
+            parseQueue.pop_front();
+
+            msg.slave = parseQueue.get_n_pop_front();
+            msg.cmd = parseQueue.get_n_pop_front();
+            unsigned char nbByte = parseQueue.get_n_pop_front();
+
+            for(int i = 0; i < nbByte; i++)
             {
-                parserMutex.unlock();
+                msg.data.push_back(parseQueue.get_n_pop_front());
+            }
+
+            uint16_t checksum = (uint16_t)(parseQueue.get_n_pop_front()<<8);
+            checksum += parseQueue.get_n_pop_front();
+
+            //pop the unused end data
+            parseQueue.pop_front();
+
+            uint16_t calc_checksum = calculateCheckSum(msg.slave, msg.cmd, nbByte, msg.data);
+
+            // if the checksum is bad, drop the packet
+            if(checksum == calc_checksum)
+            {
+                publisher.publish(msg);
             }
         }
     }
