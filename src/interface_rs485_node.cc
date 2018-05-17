@@ -72,10 +72,10 @@ namespace interface_rs485
     void InterfaceRs485Node::readData()
     {
         ROS_INFO("begin the read data threads");
+        char data[8192];
         while(!ros::isShuttingDown())
         {
             ros::Duration(0.01).sleep();
-            char data[8192];
             ssize_t str_len = serialConnection.receive(data, 8192);
             readCount++;
             if(readCount >= std::numeric_limits<int>::max() - 2)
