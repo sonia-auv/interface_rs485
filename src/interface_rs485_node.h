@@ -30,8 +30,8 @@ namespace interface_rs485
         uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data);
         uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data);
 
-        int writeCount = 0;
-        int readCount = 0;
+        unsigned int writeCount = 0;
+        unsigned int readCount = 0;
 
         ros::NodeHandlePtr nh;
         Serial serialConnection;
