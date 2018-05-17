@@ -154,36 +154,34 @@ namespace interface_rs485
                 }
                 else
                 {
-                    break;
+                    SendRS485Msg msg = SendRS485Msg();
+
+                    //pop the unused start data
+                    parseQueue.pop_front();
+
+                    msg.slave = parseQueue.get_n_pop_front();
+                    msg.cmd = parseQueue.get_n_pop_front();
+                    unsigned char nbByte = parseQueue.get_n_pop_front();
+
+                    for(int i = 0; i < nbByte; i++)
+                    {
+                        msg.data.push_back(parseQueue.get_n_pop_front());
+                    }
+
+                    uint16_t checksum = (uint16_t)(parseQueue.get_n_pop_front()<<8);
+                    checksum += parseQueue.get_n_pop_front();
+
+                    //pop the unused end data
+                    parseQueue.pop_front();
+
+                    uint16_t calc_checksum = calculateCheckSum(msg.slave, msg.cmd, nbByte, msg.data);
+
+                    // if the checksum is bad, drop the packet
+                    if(checksum == calc_checksum)
+                    {
+                        publisher.publish(msg);
+                    }
                 }
-            }
-
-            SendRS485Msg msg = SendRS485Msg();
-
-            //pop the unused start data
-            parseQueue.pop_front();
-
-            msg.slave = parseQueue.get_n_pop_front();
-            msg.cmd = parseQueue.get_n_pop_front();
-            unsigned char nbByte = parseQueue.get_n_pop_front();
-
-            for(int i = 0; i < nbByte; i++)
-            {
-                msg.data.push_back(parseQueue.get_n_pop_front());
-            }
-
-            uint16_t checksum = (uint16_t)(parseQueue.get_n_pop_front()<<8);
-            checksum += parseQueue.get_n_pop_front();
-
-            //pop the unused end data
-            parseQueue.pop_front();
-
-            uint16_t calc_checksum = calculateCheckSum(msg.slave, msg.cmd, nbByte, msg.data);
-
-            // if the checksum is bad, drop the packet
-            if(checksum == calc_checksum)
-            {
-                publisher.publish(msg);
             }
         }
     }
