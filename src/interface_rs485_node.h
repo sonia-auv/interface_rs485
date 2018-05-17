@@ -44,8 +44,6 @@ namespace interface_rs485
 
         ros::Subscriber subscriber;
         ros::Publisher publisher;
-
-        ros::Time timestamp;
     };
 }
 
