@@ -39,7 +39,7 @@ namespace interface_rs485
     }
 
     //calculate the checksum
-    uint16_t InterfaceRs485Node::calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data)
+    uint16_t InterfaceRs485Node::calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data)
     {
         uint16_t check = (uint16_t)(0x3A+slave+cmd+nbByte+0x0D);
         for(uint8_t i = 0; i < nbByte; i++)
@@ -50,7 +50,7 @@ namespace interface_rs485
         return check;
     }
 
-    uint16_t InterfaceRs485Node::calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data)
+    uint16_t InterfaceRs485Node::calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data)
     {
         uint16_t check = (uint16_t)(0x3A+slave+cmd+nbByte+0x0D);
         for(uint8_t i = 0; i < nbByte; i++)

@@ -22,13 +22,13 @@ namespace interface_rs485
 
     private:
 
+        uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data);
+        uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data);
+
         void receiveData(const SendRS485Msg::ConstPtr &receivedData);
         void readData();
         void writeData();
-
         void parseData();
-        uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data);
-        uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data);
 
         unsigned int writeCount = 0;
         unsigned int readCount = 0;
