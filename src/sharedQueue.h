@@ -72,6 +72,8 @@ T SharedQueue<T>::get_n_pop_front()
     }
     T temp = queue_.front();
     queue_.pop_front();
+    mlock.unlock();
+    cond_.notify_one();
     return temp;
 }
 
@@ -101,6 +103,7 @@ unsigned long SharedQueue<T>::size()
     std::unique_lock<std::mutex> mlock(mutex_);
     unsigned long size = queue_.size();
     mlock.unlock();
+    cond_.notify_one();
     return size;
 }
 
@@ -110,6 +113,7 @@ bool SharedQueue<T>::empty()
     std::unique_lock<std::mutex> mlock(mutex_);
     bool empty = queue_.empty();
     mlock.unlock();
+    cond_.notify_one();
     return empty;
 }
 
