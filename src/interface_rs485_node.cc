@@ -132,7 +132,7 @@ namespace interface_rs485
 
                 if(serialConnection.transmit((const char*)data, data_size) <= 0)
                 {
-                    ROS_INFO("RS485 send an empty packet...");
+                    ROS_DEBUG("RS485 send an empty packet...");
                 }
             }
         }
