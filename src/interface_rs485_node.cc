@@ -9,7 +9,7 @@ namespace interface_rs485
 
     // node Construtor
     InterfaceRs485Node::InterfaceRs485Node(const ros::NodeHandlePtr &_nh)
-    : nh(_nh), serialConnection("/dev/ttyS5")
+    : nh(_nh), serialConnection("/dev/ttyUSB0")
     {
         ROS_INFO("good");
         publisher = nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataTx", 100);
@@ -29,7 +29,7 @@ namespace interface_rs485
     // node spin
     void InterfaceRs485Node::Spin()
     {
-        ros::Rate r(50);
+        ros::Rate r(100);
         while(ros::ok())
         {
             ros::spinOnce();
@@ -130,10 +130,7 @@ namespace interface_rs485
 
                 ROS_DEBUG("%0x\n%0x\n%0x\n%0x\n%0x\n%0x\n%0x\n%0x\n", data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]);
 
-                if(serialConnection.transmit((const char*)data, data_size) <= 0)
-                {
-                    ROS_DEBUG("RS485 send an empty packet...");
-                }
+                serialConnection.transmit((const char*)data, data_size);
             }
         }
     }
