@@ -29,7 +29,7 @@ Serial::Serial(std::string port)
     cfsetospeed(&options, B115200);
 
     options.c_cflag |= (CLOCAL | CREAD);
-    options.c_cflag |= CRTSCTS;
+    //options.c_cflag |= CRTSCTS;
     //options.c_cflag |= (IXON | IXOFF);
 
     tcsetattr(fd, TCSANOW, &options);
