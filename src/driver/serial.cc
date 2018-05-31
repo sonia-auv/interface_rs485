@@ -30,7 +30,7 @@ Serial::Serial(std::string port)
 
     options.c_cflag |= (CLOCAL | CREAD);
     options.c_cflag |= CRTSCTS;
-    options.c_cflag |= (IXON | IXOFF);
+    //options.c_cflag |= (IXON | IXOFF);
 
     tcsetattr(fd, TCSANOW, &options);
 }
