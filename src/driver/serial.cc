@@ -29,8 +29,23 @@ Serial::Serial(std::string port)
     cfsetospeed(&options, B115200);
 
     options.c_cflag |= (CLOCAL | CREAD);
-    options.c_cflag |= CRTSCTS;
-    options.c_iflag |= (IXON | IXOFF | IXANY);
+    options.c_cflag &= ~CSIZE;
+    options.c_cflag |= CS8;
+
+    options.c_cflag &= ~(PARENB | PARODD);
+    options.c_cflag &= ~CSTOPB;
+    options.c_cflag &= ~CRTSCTS;
+
+    //Input Flags
+    options.c_iflag     &= ~IGNBRK;
+    options.c_iflag &= ~(IXON | IXOFF | IXANY);
+
+    //Local Flags
+    options.c_lflag  = 0;
+
+    //Output Flags
+    options.c_oflag  = 0;
+
 
     tcsetattr(fd, TCSANOW, &options);
 }
