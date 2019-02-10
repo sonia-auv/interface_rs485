@@ -1,0 +1,2 @@
+#Constants informations
+/interface_RS485/connection/tty_port: "/dev/ttyUSB1"

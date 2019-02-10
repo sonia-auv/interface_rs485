@@ -8,6 +8,7 @@
 #include <string>
 #include <thread>
 #include <sharedQueue.h>
+#include "Configuration.h"
 
 namespace interface_rs485
 {
@@ -21,6 +22,7 @@ namespace interface_rs485
         void Spin();
 
     private:
+	Configuration configuration;
 
         uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data);
         uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data);

@@ -3,4 +3,6 @@
 	    pkg="interface_rs485"
 	    type="interface_rs485_node"
 	    output="screen" />
+	<rosparam command="load"
+        	file="$(find interface_RS485)/config/interface_RS485_conf.yaml"/>
 </launch>
