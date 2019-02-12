@@ -1,6 +1,3 @@
-//
-// Created by sonia on 5/17/18.
-//
 
 #ifndef INTERFACE_RS485_SHAREDQUEUE_H
 #define INTERFACE_RS485_SHAREDQUEUE_H

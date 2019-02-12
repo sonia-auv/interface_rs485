@@ -1,5 +1,5 @@
 //
-// Created by coumarc9 on 7/24/17. and modified by Lucas
+// Created by coumarc9 on 7/24/17. and modified by Lucas ^^
 //
 
 #ifndef INTERFACE_CONFIGURATION_H
@@ -39,4 +39,4 @@ namespace interface_rs485
 
 
 
-#endif //PROVIDER_HYDROPHONE_CONFIGURATION_H
+#endif

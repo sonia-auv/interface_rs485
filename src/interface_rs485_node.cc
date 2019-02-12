@@ -9,9 +9,8 @@ namespace interface_rs485
 
     // node Construtor
     InterfaceRs485Node::InterfaceRs485Node(const ros::NodeHandlePtr &_nh)
-    : nh(_nh), configuration(nh), serialConnection(configuration.getTtyPort())
+    : nh(_nh), configuration(_nh), serialConnection(configuration.getTtyPort())
     {
-        ROS_INFO("good");
         publisher = nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataTx", 100);
         subscriber = nh->subscribe("/interface_rs485/dataRx", 100, &InterfaceRs485Node::receiveData, this);
 

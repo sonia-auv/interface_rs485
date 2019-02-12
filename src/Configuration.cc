@@ -30,7 +30,7 @@ namespace interface_rs485
         if (nh->hasParam("/interface_RS485" + paramName)) {
             nh->getParam("/interface_RS485" + paramName, attribute);
         } else {
-            ROS_WARN_STREAM("Did not find /provider_hydrophone" + paramName
+            ROS_WARN_STREAM("Did not find /interface_RS485" + paramName
                                     << ". Using default.");
         }
     }
