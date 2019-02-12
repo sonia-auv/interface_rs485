@@ -1,5 +1,5 @@
 #Constants informations
-/interface_RS485/connection/tty_port: "/dev/ttyS5"
+/interface_RS485/connection/tty_port: "/dev/ttyUSB1"
 
 /interface_RS485/data/sleep_time: 0.1
 /interface_RS485/data/read_chunk: 8192
