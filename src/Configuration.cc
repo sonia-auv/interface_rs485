@@ -9,7 +9,9 @@ namespace interface_rs485
 
     Configuration::Configuration(const ros::NodeHandlePtr &nh)
         : nh(nh),
-          ttyPort("/dev/ttyUSB1")
+          ttyPort("/dev/ttyUSB1"),
+          sleepTime(0.1),
+          dataReadChunk(8192)
     {
         Deserialize();
     }
@@ -21,6 +23,8 @@ namespace interface_rs485
         ROS_INFO("Deserialize params");
 
         FindParameter("/connection/tty_port", ttyPort);
+        FindParameter("/data/sleep_time", sleepTime);
+        FindParameter("/data/read_chunk", dataReadChunk);
 
         ROS_INFO("End deserialize params");
     }

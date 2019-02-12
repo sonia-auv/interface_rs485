@@ -32,8 +32,7 @@ namespace interface_rs485
         void writeData();
         void parseData();
 
-        unsigned int writeCount = 0;
-        unsigned int readCount = 0;
+        double sleepTime;
 
         ros::NodeHandlePtr nh;
         Serial serialConnection;

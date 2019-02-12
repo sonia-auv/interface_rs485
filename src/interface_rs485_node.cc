@@ -9,7 +9,7 @@ namespace interface_rs485
 
     // node Construtor
     InterfaceRs485Node::InterfaceRs485Node(const ros::NodeHandlePtr &_nh)
-    : nh(_nh), configuration(_nh), serialConnection(configuration.getTtyPort())
+    : nh(_nh), configuration(_nh), serialConnection(configuration.getTtyPort()), sleepTime(configuration.getSleepTime())
     {
         publisher = nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataTx", 100);
         subscriber = nh->subscribe("/interface_rs485/dataRx", 100, &InterfaceRs485Node::receiveData, this);
@@ -71,16 +71,12 @@ namespace interface_rs485
     void InterfaceRs485Node::readData()
     {
         ROS_INFO("begin the read data threads");
-        char data[8192];
+        const int dataReadChunk = configuration.getDataReadChunk();
+        char data[dataReadChunk];
         while(!ros::isShuttingDown())
         {
-            ros::Duration(0.01).sleep();
-            ssize_t str_len = serialConnection.receive(data, 8192);
-            readCount++;
-            if(readCount >= std::numeric_limits<int>::max() - 2)
-            {
-                readCount = 0;
-            }
+            ros::Duration(sleepTime).sleep();
+            ssize_t str_len = serialConnection.receive(data, dataReadChunk);
 
             if(str_len != -1)
             {
@@ -98,16 +94,10 @@ namespace interface_rs485
         ROS_INFO("begin the write data threads");
         while(!ros::isShuttingDown())
         {
-            ros::Duration(0.01).sleep();
+            ros::Duration(sleepTime).sleep();
             while(!writerQueue.empty())
             {
                 SendRS485Msg::ConstPtr msg_ptr = writerQueue.get_n_pop_front();
-
-                writeCount++;
-                if(writeCount >= std::numeric_limits<int>::max() - 2)
-                {
-                    writeCount = 0;
-                }
 
                 size_t data_size = msg_ptr->data.size() + 7;
                 uint8_t data[data_size];
@@ -140,7 +130,7 @@ namespace interface_rs485
         ROS_INFO("begin the parse data threads");
         while(!ros::isShuttingDown())
         {
-            ros::Duration(0.01).sleep();
+            ros::Duration(sleepTime).sleep();
             //read until the start there or the queue is empty
             while(!parseQueue.empty())
             {

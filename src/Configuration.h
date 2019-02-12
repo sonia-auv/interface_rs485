@@ -19,12 +19,16 @@ namespace interface_rs485
         ~Configuration();
 
         std::string getTtyPort() const {return ttyPort;}
+        double getSleepTime() const {return sleepTime;}
+        int getDataReadChunk() const {return dataReadChunk;}
 
     private:
 
         ros::NodeHandlePtr nh;
 
         std::string ttyPort;
+        double sleepTime;
+        int dataReadChunk;
 
         void Deserialize();
         void SetParameter();
