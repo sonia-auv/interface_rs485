@@ -9,7 +9,7 @@ namespace interface_rs485
 
     Configuration::Configuration(const ros::NodeHandlePtr &nh)
         : nh(nh),
-          ttyPort("/dev/ttyUSB1"),
+          ttyPort("/dev/RS485"),
           sleepTime(0.1),
           dataReadChunk(8192)
     {
