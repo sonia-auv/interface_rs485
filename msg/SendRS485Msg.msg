@@ -41,6 +41,9 @@ uint8 CMD_PS_CHECK_12V        = 19
 uint8 CMD_PS_CHECK_16V_1      = 20
 uint8 CMD_PS_CHECK_16V_2      = 21
 
+uint8 CMD_IO_ARM_OPEN       = 22
+uint8 CMD_IO_ARM_CLOSE      = 23
+
 
 uint8 CMD_POWERSUPPLY_action1 = 2
 
