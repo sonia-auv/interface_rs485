@@ -11,7 +11,7 @@ namespace interface_rs485
     InterfaceRs485Node::InterfaceRs485Node(const ros::NodeHandlePtr &_nh)
     : nh(_nh), configuration(_nh), serialConnection(configuration.getTtyPort()), sleepTime(configuration.getSleepTime())
     {
-        publisher = nh->advertise<interface_rs485::SendRS485Msg>("/interface_rs485/dataTx", 100);
+        publisher = nh->advertise<sonia_msgs::SendRS485Msg>("/interface_rs485/dataTx", 100);
         subscriber = nh->subscribe("/interface_rs485/dataRx", 100, &InterfaceRs485Node::receiveData, this);
 
         reader = std::thread(std::bind(&InterfaceRs485Node::readData, this));
@@ -61,7 +61,7 @@ namespace interface_rs485
     }
 
     //callback when the subscriber receive data
-    void InterfaceRs485Node::receiveData(const SendRS485Msg::ConstPtr &receivedData)
+    void InterfaceRs485Node::receiveData(const sonia_msgs::SendRS485Msg::ConstPtr &receivedData)
     {
         ROS_DEBUG("receive a rs485 data");
         writerQueue.push_back(receivedData);
@@ -97,7 +97,7 @@ namespace interface_rs485
             ros::Duration(sleepTime).sleep();
             while(!writerQueue.empty())
             {
-                SendRS485Msg::ConstPtr msg_ptr = writerQueue.get_n_pop_front();
+                sonia_msgs::SendRS485Msg::ConstPtr msg_ptr = writerQueue.get_n_pop_front();
 
                 size_t data_size = msg_ptr->data.size() + 7;
                 uint8_t data[data_size];
@@ -140,7 +140,7 @@ namespace interface_rs485
                 }
                 else
                 {
-                    SendRS485Msg msg = SendRS485Msg();
+                    sonia_msgs::SendRS485Msg msg = sonia_msgs::SendRS485Msg();
 
                     //pop the unused start data
                     parseQueue.pop_front();
