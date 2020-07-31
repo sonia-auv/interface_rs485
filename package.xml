@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>interface_rs485</name>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <description>The rs485 package</description>
 
   <maintainer email="kevin.coombs.cem@gmail.com">kevin coombs</maintainer>
@@ -12,9 +12,9 @@
 
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
-  <build_depend>sonia_msgs</build_depend>
+  <build_depend>sonia_common</build_depend>
 
   <run_depend>roscpp</run_depend>
   <run_depend>std_msgs</run_depend>
-  <run_depend>sonia_msgs</run_depend>
+  <run_depend>sonia_common</run_depend>
 </package>

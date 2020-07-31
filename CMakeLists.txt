@@ -32,7 +32,7 @@ find_package(
         roscpp
         cmake_modules
         std_msgs
-        sonia_msgs
+        sonia_common
 )
 
 #===============================================================================
@@ -42,7 +42,7 @@ catkin_package(
         CATKIN_DEPENDS
         roscpp
         std_msgs
-        sonia_msgs
+        sonia_common
 )
 
 

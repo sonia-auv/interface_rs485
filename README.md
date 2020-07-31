@@ -78,7 +78,7 @@ Add additional notes about how to deploy this on a live system
 
 Add additional project dependencies
 
-* [ROS](http://wiki.ros.org/) - ROS robotic framework
+* [ROS](http://wiki.ros.org/) - ROS perceptionic framework
 
 
 ## Versioning
