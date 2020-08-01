@@ -31,10 +31,10 @@ namespace interface_rs485
 
     template <typename TType>
     void Configuration::FindParameter(const std::string &paramName, TType &attribute) {
-        if (nh->hasParam("/interface_RS485" + paramName)) {
-            nh->getParam("/interface_RS485" + paramName, attribute);
+        if (nh->hasParam("/interface_rs485" + paramName)) {
+            nh->getParam("/interface_rs485" + paramName, attribute);
         } else {
-            ROS_WARN_STREAM("Did not find /interface_RS485" + paramName
+            ROS_WARN_STREAM("Did not find /interface_rs485" + paramName
                                     << ". Using default.");
         }
     }
