@@ -3,7 +3,7 @@
 
 #include "driver/serial.h"
 
-#include <interface_rs485/SendRS485Msg.h>
+#include <sonia_common/SendRS485Msg.h>
 #include <ros/ros.h>
 #include <string>
 #include <thread>
@@ -27,7 +27,7 @@ namespace interface_rs485
         uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data);
         uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data);
 
-        void receiveData(const SendRS485Msg::ConstPtr &receivedData);
+        void receiveData(const sonia_common::SendRS485Msg::ConstPtr &receivedData);
         void readData();
         void writeData();
         void parseData();
@@ -40,7 +40,7 @@ namespace interface_rs485
         std::thread writer;
         std::thread parser;
 
-        SharedQueue<SendRS485Msg::ConstPtr> writerQueue;
+        SharedQueue<sonia_common::SendRS485Msg::ConstPtr> writerQueue;
         SharedQueue<uint8_t> parseQueue;
 
         ros::Subscriber subscriber;
