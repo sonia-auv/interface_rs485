@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.128.0/containers/docker-existing-dockerfile
 {
-	"name": "interface_RS485",
+	"name": "interface_rs485",
 	// Sets the run context to one level up instead of the .devcontainer folder.
 	"context": "..",
 	// Update the 'dockerFile' property if you aren't using the standard 'Dockerfile' filename.
@@ -25,6 +25,6 @@
 	"mounts": [
 		"source=vscode-server-extension,target=/home/sonia/.vscode-server/extensions,type=volume"
 	],
-	"workspaceMount": "target=/home/sonia/ros_sonia_ws/src/interface_RS485,type=volume",
-	"workspaceFolder": "/home/sonia/ros_sonia_ws/src/interface_RS485"
+	"workspaceMount": "target=/home/sonia/ros_sonia_ws/src/interface_rs485,type=volume",
+	"workspaceFolder": "/home/sonia/ros_sonia_ws/src/interface_rs485"
 }

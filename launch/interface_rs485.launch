@@ -1,5 +1,5 @@
 <launch>
-	<node name="interface_RS485"
+	<node name="interface_rs485"
 	    pkg="interface_rs485"
 	    type="interface_rs485_node"
 	    output="screen" />

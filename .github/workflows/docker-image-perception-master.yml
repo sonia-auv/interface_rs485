@@ -12,7 +12,7 @@ jobs:
       BASE_IMAGE: "docker.pkg.github.com/sonia-auv/sonia_common/sonia_common:x86-perception-latest"
       ARCH: x86
       TARGET_TYPE: perception
-      IMAGE_NAME: interface_RS485
+      IMAGE_NAME: interface_rs485
       GITHUB_REMOTE_URL: docker.pkg.github.com/${{ github.repository }}
     steps:
       - uses: actions/checkout@v2
@@ -48,7 +48,7 @@ jobs:
       BASE_IMAGE: "docker.pkg.github.com/sonia-auv/sonia_common/sonia_common:arm64-perception-latest"
       ARCH: arm64
       TARGET_TYPE: perception
-      IMAGE_NAME: interface_RS485
+      IMAGE_NAME: interface_rs485
       GITHUB_REMOTE_URL: docker.pkg.github.com/${{ github.repository }}
     steps:
       - uses: actions/checkout@v2

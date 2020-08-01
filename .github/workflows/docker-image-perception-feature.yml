@@ -13,7 +13,7 @@ jobs:
       ARCH: x86
       TARGET_TYPE: perception
       TARGET_VERSION: feature
-      IMAGE_NAME: interface_RS485
+      IMAGE_NAME: interface_rs485
       GITHUB_REMOTE_URL: docker.pkg.github.com/${{ github.repository }}
     steps:
       - uses: actions/checkout@v2
@@ -40,7 +40,7 @@ jobs:
       ARCH: arm64
       TARGET_TYPE: perception
       TARGET_VERSION: feature
-      IMAGE_NAME: interface_RS485
+      IMAGE_NAME: interface_rs485
       GITHUB_REMOTE_URL: docker.pkg.github.com/${{ github.repository }}
     steps:
       - uses: actions/checkout@v2

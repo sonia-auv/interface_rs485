@@ -57,13 +57,13 @@ Serial::~Serial()
 
 ssize_t Serial::receive(char* data, size_t count)
 {
-    ROS_DEBUG("interface_RS485 receive data");
+    ROS_DEBUG("interface_rs485 receive data");
 
     return read(fd, data, count);
 }
 
 ssize_t Serial::transmit(const char* data, size_t string_length)
 {
-    ROS_DEBUG("interface_RS485 transmit data");
+    ROS_DEBUG("interface_rs485 transmit data");
     return write(fd, data, string_length);
 }

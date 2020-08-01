@@ -7,7 +7,7 @@ USER root
 ARG BUILD_DATE
 ARG VERSION
 
-ENV NODE_NAME=interface_RS485
+ENV NODE_NAME=interface_rs485
 
 LABEL net.etsmtl.sonia-auv.node.build-date=${BUILD_DATE}
 LABEL net.etsmtl.sonia-auv.node.version=${VERSION}

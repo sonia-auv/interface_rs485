@@ -1,10 +1,10 @@
-# interface_RS485
+# interface_rs485
 This module is S.O.N.I.A's comunication interface for RS485 based on ROS
 
-![Docker Image CI - Master Branch](https://github.com/sonia-auv/interface_RS485/workflows/Docker%20Image%20CI%20-%20Master%20Branch/badge.svg)
-![Docker Image CI - Develop Branch](https://github.com/sonia-auv/interface_RS485/workflows/Docker%20Image%20CI%20-%20Develop%20Branch/badge.svg?branch=develop)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/sonia-auv/interface_RS485)
-![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/sonia-auv/interface_RS485.svg)
+![Docker Image CI - Master Branch](https://github.com/sonia-auv/interface_rs485/workflows/Docker%20Image%20CI%20-%20Master%20Branch/badge.svg)
+![Docker Image CI - Develop Branch](https://github.com/sonia-auv/interface_rs485/workflows/Docker%20Image%20CI%20-%20Develop%20Branch/badge.svg?branch=develop)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/sonia-auv/interface_rs485)
+![Average time to resolve an issue](https://isitmaintained.com/badge/resolution/sonia-auv/interface_rs485.svg)
 
 ## Getting Started
 
@@ -12,7 +12,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 Clone current project by using following command :
 ```bash
-    git clone git@github.com:sonia-auv/interface_RS485.git
+    git clone git@github.com:sonia-auv/interface_rs485.git
 ```
 
 ### Prerequisites

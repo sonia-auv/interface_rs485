@@ -12,7 +12,7 @@
                 "task": "build",
                 "type": "catkin_make"
             },
-            "target": "/home/sonia/ros_sonia_ws/src/interface_RS485/launch/interface_RS485.launch",
+            "target": "/home/sonia/ros_sonia_ws/src/interface_rs485/launch/interface_rs485.launch",
         }
     ]
 }
