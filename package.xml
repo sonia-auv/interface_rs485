@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>interface_rs485</name>
-  <version>1.1.1</version>
+  <version>1.1.2</version>
   <description>The rs485 package</description>
 
   <maintainer email="kevin.coombs.cem@gmail.com">kevin coombs</maintainer>
