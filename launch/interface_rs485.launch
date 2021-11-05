@@ -1,8 +1,7 @@
 <launch>
-	<node name="interface_rs485"
-	    pkg="interface_rs485"
-	    type="interface_rs485_node"
-	    output="screen" />
-	<rosparam command="load"
-        	file="$(find interface_rs485)/config/interface_RS485_conf.yaml"/>
+	<!-- load interface_rs485-->
+	<node name="interface_rs485" pkg="interface_rs485" type="interface_rs485_node" output="screen" />
+
+	<rosparam command="load" file="$(find interface_rs485)/config/$(env AUV).yaml"/>
+	
 </launch>
