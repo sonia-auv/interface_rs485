@@ -8,7 +8,7 @@
 #===============================================================================
 # G L O B A L   P R O J E C T   C O N F I G U R A T I O N
 
-cmake_minimum_required(VERSION 2.8.0)
+cmake_minimum_required(VERSION 3.0.2)
 project(interface_rs485)
 
 if (NOT CMAKE_BUILD_TYPE)
