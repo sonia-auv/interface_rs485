@@ -30,9 +30,6 @@ WORKDIR ${SONIA_WS}
 
 COPY . ${NODE_PATH}
 
-RUN apt update
-RUN apt upgrade -y
-
 RUN bash -c "source ${ROS_WS_SETUP}; source ${BASE_LIB_WS_SETUP}; catkin_make"
 
 RUN chown -R ${SONIA_USER}: ${SONIA_WS}
