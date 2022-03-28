@@ -1,0 +1,5 @@
+<launch>
+	<!-- load interface_rs485-->
+	<node name="interface_rs485" pkg="interface_rs485" type="interface_rs485_sim.py" output="screen" />
+	<rosparam command="load" file="$(find interface_rs485)/config/LOCAL.yaml"/>
+</launch>
