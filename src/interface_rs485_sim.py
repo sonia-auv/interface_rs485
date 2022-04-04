@@ -8,23 +8,31 @@ from sonia_common.msg import *
 
 def sim_power_auv7():
     rospy.init_node('interface_rs485_simulation', anonymous=True)
-    pub = rospy.Publisher('/interface_rs485/dataTx', SendRS485Msg, queue_size=10)
+    pub = rospy.Publisher('/interface_rs485/dataTx', SendRS485Msg, queue_size=100)
     rate = rospy.Rate(1)  # 10hz
+    msg = SendRS485Msg()
     while not rospy.is_shutdown():
-        msg = SendRS485Msg()
         for i in range(0, 4):
             msg.slave = i
             msg.cmd = 0
             msg.data = voltage_generation()
+            print(msg)
             pub.publish(msg)
 
             msg.cmd = 1
             msg.data = current_generation()
+            print(msg)
+            pub.publish(msg)
+
+            msg.cmd = 15
+            msg.data = [numpy.random.randint(0,2),numpy.random.randint(0,2)]
+            print(msg)
             pub.publish(msg)
 
             msg.cmd = 15
             msg.data = motor_generation()
             pub.publish(msg)
+
         rate.sleep()
 
 
@@ -49,7 +57,6 @@ def motor_generation():
     for j in range(0,8):
         rand.append(numpy.random.randint(3))
     return rand
-
 
 def transform(rand):
     data = []
