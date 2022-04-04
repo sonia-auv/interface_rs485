@@ -10,8 +10,8 @@
 <launch>
 	<param name="target" value="$(env AUV)" />
 	<param name="local" value="LOCAL" type="str" />
-	<param name="auv7" value="AUV8" type="str" />
-	<param name="auv8" value="AUV7" type="str" />
+	<param name="auv7" value="AUV7" type="str" />
+	<param name="auv8" value="AUV8" type="str" />
 
 	<arg name="simulation" value="$(eval 'target' == 'local')" />
 	<arg name="sub-auv7" value="$(eval 'target' == 'auv7')" />
