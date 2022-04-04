@@ -19,9 +19,11 @@ ENV SONIA_WS=${SONIA_HOME}/ros_sonia_ws
 ENV NODE_NAME=${NODE_NAME}
 ENV NODE_PATH=${SONIA_WS}/src/${NODE_NAME}
 ENV LAUNCH_FILE=${NODE_NAME}.launch
+ENV SIM_LAUNCH_FILE=${NODE_NAME}_sim.launch
 ENV SCRIPT_DIR=${SONIA_WS}/scripts
 ENV ENTRYPOINT_FILE=sonia_entrypoint.sh
 ENV LAUNCH_ABSPATH=${NODE_PATH}/launch/${LAUNCH_FILE}
+ENV SIM_LAUNCH_ABSPATH=${NODE_PATH}/launch/${SIM_LAUNCH_FILE}
 ENV ENTRYPOINT_ABSPATH=${NODE_PATH}/scripts/${ENTRYPOINT_FILE}
 
 ENV SONIA_WS_SETUP=${SONIA_WS}/devel/setup.bash
@@ -38,7 +40,7 @@ USER ${SONIA_USER}
 
 RUN mkdir ${SCRIPT_DIR}
 RUN cat $ENTRYPOINT_ABSPATH > ${SCRIPT_DIR}/entrypoint.sh
-RUN echo "roslaunch --wait $LAUNCH_ABSPATH" > ${SCRIPT_DIR}/launch.sh
+RUN if [ "$AUV" = "LOCAL" ] ; then echo "roslaunch --wait $SIM_LAUNCH_ABSPATH" > ${SCRIPT_DIR}/launch.sh ; else echo "roslaunch --wait $LAUNCH_ABSPATH" > ${SCRIPT_DIR}/launch.sh ; fi
 
 RUN chmod +x ${SCRIPT_DIR}/entrypoint.sh && chmod +x ${SCRIPT_DIR}/launch.sh 
 
