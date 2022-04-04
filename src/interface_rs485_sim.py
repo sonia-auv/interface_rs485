@@ -22,9 +22,9 @@ def sim_power_auv7():
             msg.data = current_generation()
             pub.publish(msg)
 
-            # msg.cmd = 15
-            # msg.data = random.uniform(15.6, 16)
-            # pub.publish(msg)
+            msg.cmd = 15
+            msg.data = motor_generation()
+            pub.publish(msg)
         rate.sleep()
 
 
@@ -44,6 +44,11 @@ def current_generation():
 
     return transform(rand)
 
+def motor_generation():
+    rand = []
+    for j in range(0,8):
+        rand.append(numpy.random.randint(3))
+    return rand
 
 
 def transform(rand):
