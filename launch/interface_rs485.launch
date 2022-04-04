@@ -21,4 +21,5 @@
 	<node name="interface_rs485" pkg="interface_rs485" type="interface_rs485_node" output="screen" if="$(eval arg('sub-auv7'))"/>
 	<node name="interface_rs485" pkg="interface_rs485" type="interface_rs485_node" output="screen" if="$(eval arg('sub-auv8'))"/>
 
+	<rosparam command="load" file="$(find interface_rs485)/config/$(env AUV).yaml"/>
 </launch>
