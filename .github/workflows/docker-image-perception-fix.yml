@@ -3,6 +3,8 @@ name: Docker Image CI - Fix Branch
 on:
   push:
     branches: [fix/**]
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   build-ros-perception-x86-64:
