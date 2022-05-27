@@ -27,7 +27,7 @@ docker -v
 
 If you receive an output in the likes of :
 ```
-Docker version 19.03.5, build 633a0ea
+Docker version 20.10.14, build a224086
 ```
 
 It means you have it installed. If not follow instructions on how to install it for your OS.
@@ -36,7 +36,7 @@ It means you have it installed. If not follow instructions on how to install it 
 
 A step by step series of examples that tell you how to get a development env running
 
-Say what the step will be
+
 
 ```
 Give the example
@@ -50,7 +50,7 @@ until finished
 
 End with an example of getting some data out of the system or using it for a little demo
 
-## Running the tests
+<!-- ## Running the tests
 
 Explain how to run the automated tests for this system
 
@@ -68,7 +68,7 @@ Explain what these tests test and why
 
 ```
 Give an example
-```
+``` -->
 
 ## Deployment
 
