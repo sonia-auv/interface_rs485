@@ -72,9 +72,7 @@ Give an example
 
 ## Deployment
 
-Build the docker image :
 
-```docker build -t interface_rs485:latest .```
 ### Run on AUVs
 
 In compose : 
@@ -97,10 +95,17 @@ interface_rs485:
 
 ### Local
 
-```docker run -it interface_rs485:latest```
+Build the docker image :
+
+```docker build -t interface_rs485:latest .```
+
+Run the docker image :
+
 ```docker run -it interface_rs485:latest```
 
-With dev board :
+OR
+
+Compose with dev board :
 
 ```  
 interface_rs485:
@@ -122,8 +127,9 @@ interface_rs485:
       - interface_rs485
       - interface_rs485_sim.launch
 ```
+OR 
 
-In compose :
+Compose with simulation :
 
 ```  
 interface_rs485:
