@@ -4,7 +4,7 @@ on:
   push:
     branches: [feature/**]
   schedule:
-    - cron: "12 0 * * *"
+    - cron: "0 0 * * *"
 
 jobs:
   build-ros-perception-x86-64:
