@@ -72,7 +72,79 @@ Give an example
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+Build the docker image :
+
+```docker build -t interface_rs485:latest .```
+### Run on AUVs
+
+In compose : 
+
+```  
+interface_rs485:
+    image: ghcr.io/sonia-auv/interface_rs485/interface_rs485:x86-perception-feature-simulation
+    container_name: interface_rs485
+    environment:
+      - ROS_IP=${ADRESS_IP}
+      - ROS_MASTER_URI=http://${ADRESS_IP}:11311
+      - AUV=${AUV}
+    network_mode: host
+    privileged: true
+    volumes:
+     - /dev/RS485:/dev/RS485
+    depends_on:
+     - ros-master
+```
+
+### Local
+
+```docker run -it interface_rs485:latest```
+```docker run -it interface_rs485:latest```
+
+With dev board :
+
+```  
+interface_rs485:
+    image: ghcr.io/sonia-auv/interface_rs485/interface_rs485:x86-perception-feature-simulation
+    container_name: interface_rs485
+    environment:
+      - ROS_IP=${ADRESS_IP}
+      - ROS_MASTER_URI=http://${ADRESS_IP}:11311
+      - AUV=${AUV}
+    network_mode: host
+    privileged: true
+    volumes:
+     - /dev/ttyUSB0:/dev/ttyUSB0
+    depends_on:
+     - ros-master
+    command:
+      - roslaunch
+      - --wait
+      - interface_rs485
+      - interface_rs485_sim.launch
+```
+
+In compose :
+
+```  
+interface_rs485:
+    image: ghcr.io/sonia-auv/interface_rs485/interface_rs485:x86-perception-feature-simulation
+    container_name: interface_rs485
+    environment:
+      - ROS_IP=${ADRESS_IP}
+      - ROS_MASTER_URI=http://${ADRESS_IP}:11311
+      - AUV=${AUV}
+    network_mode: host
+    privileged: true
+    depends_on:
+     - ros-master
+    command:
+      - roslaunch
+      - --wait
+      - interface_rs485
+      - interface_rs485_sim.launch
+```
+
+You can choose the sub by using AUV=${LOCAL_AUV} and indicating the AUV you want to simulate in LOCAL_AUV in launch_local.sh.
 
 ## Built With
 
