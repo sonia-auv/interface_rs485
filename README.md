@@ -27,7 +27,7 @@ docker -v
 
 If you receive an output in the likes of :
 ```
-Docker version 19.03.5, build 633a0ea
+Docker version 20.10.14, build a224086
 ```
 
 It means you have it installed. If not follow instructions on how to install it for your OS.
@@ -36,7 +36,7 @@ It means you have it installed. If not follow instructions on how to install it 
 
 A step by step series of examples that tell you how to get a development env running
 
-Say what the step will be
+
 
 ```
 Give the example
@@ -50,7 +50,7 @@ until finished
 
 End with an example of getting some data out of the system or using it for a little demo
 
-## Running the tests
+<!-- ## Running the tests
 
 Explain how to run the automated tests for this system
 
@@ -68,11 +68,84 @@ Explain what these tests test and why
 
 ```
 Give an example
-```
+``` -->
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+
+### Run on AUVs
+
+In compose : 
+
+```  
+interface_rs485:
+    image: ghcr.io/sonia-auv/interface_rs485/interface_rs485:x86-perception-feature-simulation
+    container_name: interface_rs485
+    environment:
+      - ROS_IP=${ADRESS_IP}
+      - ROS_MASTER_URI=http://${ADRESS_IP}:11311
+      - AUV=${AUV}
+    network_mode: host
+    privileged: true
+    volumes:
+     - /dev/RS485:/dev/RS485
+    depends_on:
+     - ros-master
+```
+
+### Local
+
+Build the docker image :
+
+```docker build -t interface_rs485:latest .```
+
+Run the docker image :
+
+```docker run -it interface_rs485:latest```
+
+OR
+
+Compose with dev board :
+
+```  
+interface_rs485:
+    image: ghcr.io/sonia-auv/interface_rs485/interface_rs485:x86-perception-feature-simulation
+    container_name: interface_rs485
+    environment:
+      - ROS_IP=${ADRESS_IP}
+      - ROS_MASTER_URI=http://${ADRESS_IP}:11311
+      - AUV=${AUV}
+    network_mode: host
+    privileged: true
+    volumes:
+     - /dev/ttyUSB0:/dev/ttyUSB0
+    depends_on:
+     - ros-master
+```
+OR 
+
+Compose with simulation :
+
+```  
+interface_rs485:
+    image: ghcr.io/sonia-auv/interface_rs485/interface_rs485:x86-perception-feature-simulation
+    container_name: interface_rs485
+    environment:
+      - ROS_IP=${ADRESS_IP}
+      - ROS_MASTER_URI=http://${ADRESS_IP}:11311
+      - AUV=${AUV}
+    network_mode: host
+    privileged: true
+    depends_on:
+     - ros-master
+    command:
+      - roslaunch
+      - --wait
+      - interface_rs485
+      - interface_rs485_sim.launch
+```
+
+You can choose the sub by using AUV=${LOCAL_AUV} and indicating the AUV you want to simulate in LOCAL_AUV in launch_local.sh.
 
 ## Built With
 

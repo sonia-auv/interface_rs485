@@ -1,8 +1,8 @@
-name: Docker Image CI - Develop Branch
+name: Docker Image CI - Fix Branch
 
 on:
   push:
-    branches: [develop]
+    branches: [fix/**]
   schedule:
     - cron: "0 0 * * *"
 
@@ -14,7 +14,7 @@ jobs:
       BASE_IMAGE: "docker.pkg.github.com/sonia-auv/sonia_common/sonia_common:x86-perception-latest"
       ARCH: x86
       TARGET_TYPE: perception
-      TARGET_VERSION: develop
+      TARGET_VERSION: fix
       IMAGE_NAME: interface_rs485
       GITHUB_REMOTE_URL: docker.pkg.github.com/${{ github.repository }}
     steps:
@@ -24,16 +24,11 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
       - name: Build the docker image (perception based)
         run: |
-          docker build . --tag build-${TARGET_VERSION}-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} --build-arg BUILD_DATE=$(date '+%Y-%m-%d_%H:%M:%S') --build-arg VERSION=${GITHUB_REF##*/}-$(date '  +%Y-%m-%d_%H:%M:%S') --build-arg BASE_IMAGE=${BASE_IMAGE}
-
-      - name: Run Module Unit Test
-        run: |
-          docker run build-${TARGET_VERSION}-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} catkin_make run_tests
-          docker run build-${TARGET_VERSION}-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} catkin_make tests
+          docker build . --tag build-fix-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} --build-arg BUILD_DATE=$(date '+%Y-%m-%d_%H:%M:%S') --build-arg VERSION=${GITHUB_REF##*/}-$(date '  +%Y-%m-%d_%H:%M:%S') --build-arg BASE_IMAGE=${BASE_IMAGE}
 
       - name: Create Docker Image Tag
         run: |
-          docker tag build-${TARGET_VERSION}-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} ${GITHUB_REMOTE_URL}/${IMAGE_NAME}:${ARCH}-${TARGET_TYPE}-${TARGET_VERSION}
+          docker tag build-fix-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} ${GITHUB_REMOTE_URL}/${IMAGE_NAME}:${ARCH}-${TARGET_TYPE}-${TARGET_VERSION}-${GITHUB_REF##*/}
 
       - name: Push Image to Github Packages Registry
         run: |
@@ -46,7 +41,7 @@ jobs:
       BASE_IMAGE: "docker.pkg.github.com/sonia-auv/sonia_common/sonia_common:arm64-perception-latest"
       ARCH: arm64
       TARGET_TYPE: perception
-      TARGET_VERSION: develop
+      TARGET_VERSION: fix
       IMAGE_NAME: interface_rs485
       GITHUB_REMOTE_URL: docker.pkg.github.com/${{ github.repository }}
     steps:
@@ -69,16 +64,11 @@ jobs:
 
       - name: Build the docker image (perception based)
         run: |
-          docker build . --tag build-${TARGET_VERSION}-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} --build-arg BUILD_DATE=$(date '+%Y-%m-%d_%H:%M:%S') --build-arg VERSION=${GITHUB_REF##*/}-$(date '  +%Y-%m-%d_%H:%M:%S') --build-arg BASE_IMAGE=${BASE_IMAGE}
-
-      - name: Run Module Unit Test
-        run: |
-          docker run build-${TARGET_VERSION}-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} catkin_make run_tests
-          docker run build-${TARGET_VERSION}-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} catkin_make tests
+          docker build . --tag build-fix-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} --build-arg BUILD_DATE=$(date '+%Y-%m-%d_%H:%M:%S') --build-arg VERSION=${GITHUB_REF##*/}-$(date '  +%Y-%m-%d_%H:%M:%S') --build-arg BASE_IMAGE=${BASE_IMAGE}
 
       - name: Create Docker Image Tag
         run: |
-          docker tag build-${TARGET_VERSION}-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} ${GITHUB_REMOTE_URL}/${IMAGE_NAME}:${ARCH}-${TARGET_TYPE}-${TARGET_VERSION}
+          docker tag build-fix-${GITHUB_REF##*/}-${GITHUB_RUN_NUMBER} ${GITHUB_REMOTE_URL}/${IMAGE_NAME}:${ARCH}-${TARGET_TYPE}-${TARGET_VERSION}-${GITHUB_REF##*/}
 
       - name: Push Image to Github Packages Registry
         run: |

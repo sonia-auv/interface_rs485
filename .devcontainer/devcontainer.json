@@ -19,11 +19,14 @@
 		"--security-opt",
 		"seccomp=unconfined",
 		"--rm",
+		"--privileged",
+		"--env", "AUV=LOCAL",
 		"--network",
 		"host"
 	],
 	"mounts": [
-		"source=vscode-server-extension,target=/home/sonia/.vscode-server/extensions,type=volume"
+		"source=vscode-server-extension,target=/home/sonia/.vscode-server/extensions,type=volume",
+		"source=/dev,target=/dev,type=bind"
 	],
 	"workspaceMount": "target=/home/sonia/ros_sonia_ws/src/interface_rs485,type=volume",
 	"workspaceFolder": "/home/sonia/ros_sonia_ws/src/interface_rs485"
