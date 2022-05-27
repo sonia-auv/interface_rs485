@@ -121,11 +121,6 @@ interface_rs485:
      - /dev/ttyUSB0:/dev/ttyUSB0
     depends_on:
      - ros-master
-    command:
-      - roslaunch
-      - --wait
-      - interface_rs485
-      - interface_rs485_sim.launch
 ```
 OR 
 
