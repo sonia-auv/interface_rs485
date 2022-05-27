@@ -1,7 +1,25 @@
-<launch>
-	<!-- load interface_rs485-->
+<!-- <launch>
+	load interface_rs485
 	<node name="interface_rs485" pkg="interface_rs485" type="interface_rs485_node" output="screen" />
 
 	<rosparam command="load" file="$(find interface_rs485)/config/$(env AUV).yaml"/>
 	
+</launch> -->
+
+
+<launch>
+	<param name="target" value="$(env AUV)" />
+	<param name="local" value="LOCAL" type="str" />
+	<param name="auv7" value="AUV7" type="str" />
+	<param name="auv8" value="AUV8" type="str" />
+
+	<arg name="simulation" value="$(eval 'target' == 'local')" />
+	<arg name="sub-auv7" value="$(eval 'target' == 'auv7')" />
+	<arg name="sub-auv8" value="$(eval 'target' == 'auv8')" />
+	
+	<node name="interface_rs485" pkg="interface_rs485" type="interface_rs485_sim.py" output="screen" if="$(eval arg('simulation'))"/>
+	<node name="interface_rs485" pkg="interface_rs485" type="interface_rs485_node" output="screen" if="$(eval arg('sub-auv7'))"/>
+	<node name="interface_rs485" pkg="interface_rs485" type="interface_rs485_node" output="screen" if="$(eval arg('sub-auv8'))"/>
+
+	<rosparam command="load" file="$(find interface_rs485)/config/$(env AUV).yaml"/>
 </launch>
