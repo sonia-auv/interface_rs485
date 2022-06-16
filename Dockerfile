@@ -40,7 +40,7 @@ RUN mkdir ${SCRIPT_DIR}
 RUN cat $ENTRYPOINT_ABSPATH > ${SCRIPT_DIR}/entrypoint.sh
 RUN echo "roslaunch --wait $LAUNCH_ABSPATH" > ${SCRIPT_DIR}/launch.sh
 
-RUN chmod +x ${SCRIPT_DIR}/entrypoint.sh && chmod +x ${SCRIPT_DIR}/launch.sh && chmod +x ${SONIA_WS}/src/interface_rs485_sim.py
+RUN chmod +x ${SCRIPT_DIR}/entrypoint.sh && chmod +x ${SCRIPT_DIR}/launch.sh && chmod +x ${NODE_PATH}/src/interface_rs485_sim.py
 
 RUN echo "source $SONIA_WS_SETUP" >> ~/.bashrc
 
