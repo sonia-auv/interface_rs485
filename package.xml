@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <package>
   <name>interface_rs485</name>
-  <version>1.1.4</version>
+  <version>1.1.5</version>
   <description>The rs485 package</description>
 
-  <maintainer email="kevin.coombs.cem@gmail.com">kevin coombs</maintainer>
+  <maintainer email="log.club.sonia@etsmtl.net">Software Team Leader</maintainer>
 
   <license>TODO</license>
 
