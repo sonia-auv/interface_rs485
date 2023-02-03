@@ -7,8 +7,9 @@
             },
             "includePath": [
                 "/home/sonia/base_lib_ws/devel/include/**",
-                "/opt/ros/melodic/include/**",
-                "/usr/include/**"
+                "/opt/ros/noetic/include/**",
+                "/usr/include/**",
+                "/home/sonia/ros_sonia_ws/src/**"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",

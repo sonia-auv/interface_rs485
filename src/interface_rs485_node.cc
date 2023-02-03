@@ -6,7 +6,6 @@
 
 namespace interface_rs485
 {
-
     // node Construtor
     InterfaceRs485Node::InterfaceRs485Node(const ros::NodeHandlePtr &_nh)
     : nh(_nh), configuration(_nh), serialConnection(configuration.getTtyPort()), sleepTime(configuration.getSleepTime())
@@ -14,9 +13,9 @@ namespace interface_rs485
         publisher = nh->advertise<sonia_common::SendRS485Msg>("/interface_rs485/dataTx", 100);
         subscriber = nh->subscribe("/interface_rs485/dataRx", 100, &InterfaceRs485Node::receiveData, this);
 
-        reader = std::thread(std::bind(&InterfaceRs485Node::readData, this));
-        writer = std::thread(std::bind(&InterfaceRs485Node::writeData, this));
-        parser = std::thread(std::bind(&InterfaceRs485Node::parseData, this));
+        reader = std::thread(std::bind(&InterfaceRs485Node::readData, this)); // [NJ] Serial reader thread.
+        writer = std::thread(std::bind(&InterfaceRs485Node::writeData, this)); // [NJ] Serial writer thread.
+        parser = std::thread(std::bind(&InterfaceRs485Node::parseData, this)); // [NJ] Serial parser thread.
     }
 
     // node destructor
@@ -28,7 +27,7 @@ namespace interface_rs485
     // node spin
     void InterfaceRs485Node::Spin()
     {
-        ros::Rate r(50);
+        ros::Rate r(50); // [NJ] in Hertz 
         while(ros::ok())
         {
             ros::spinOnce();
@@ -37,7 +36,7 @@ namespace interface_rs485
         }
     }
 
-    //calculate the checksum
+    // [NJ] calculate the checksum from user manual
     uint16_t InterfaceRs485Node::calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, std::vector<uint8_t> data)
     {
         uint16_t check = (uint16_t)(0x3A+slave+cmd+nbByte+0x0D);
@@ -49,6 +48,7 @@ namespace interface_rs485
         return check;
     }
 
+    // [NJ] calculate the checksum from user manual
     uint16_t InterfaceRs485Node::calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, char* data)
     {
         uint16_t check = (uint16_t)(0x3A+slave+cmd+nbByte+0x0D);
@@ -64,12 +64,13 @@ namespace interface_rs485
     void InterfaceRs485Node::receiveData(const sonia_common::SendRS485Msg::ConstPtr &receivedData)
     {
         ROS_DEBUG("receive a rs485 data");
-        writerQueue.push_back(receivedData);
+        writerQueue.push_back(receivedData); // [NJ] add data to a thread-safe queue.
     }
 
     // thread to read the data in the serial port and push it to the parseQueue
     void InterfaceRs485Node::readData()
     {
+        // [NJ] This reads a chunk of data and sends it to the parse thread one byte at a time.
         ROS_INFO("begin the read data threads");
         const int dataReadChunk = configuration.getDataReadChunk();
         char data[dataReadChunk];
@@ -128,13 +129,13 @@ namespace interface_rs485
     void InterfaceRs485Node::parseData()
     {
         ROS_INFO("begin the parse data threads");
-        while(!ros::isShuttingDown())
+        while(!ros::isShuttingDown()) // [NJ]Also means when it is alive
         {
-            ros::Duration(sleepTime).sleep();
+            ros::Duration(sleepTime).sleep(); // [NJ] I assume so that we are not running at clock speed
             //read until the start there or the queue is empty
             while(!parseQueue.empty())
             {
-                if(parseQueue.front() != 0x3A)
+                if(parseQueue.front() != 0x3A) 
                 {
                     parseQueue.pop_front();
                 }
