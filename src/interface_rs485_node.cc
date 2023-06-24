@@ -163,9 +163,11 @@ namespace interface_rs485
                     uint16_t calc_checksum = calculateCheckSum(msg.slave, msg.cmd, nbByte, msg.data);
 
                     // if the checksum is bad, drop the packet
+                    ROS_DEBUG("Package Build.");
                     if(checksum == calc_checksum)
                     {
                         publisher.publish(msg);
+                        ROS_DEBUG("Package Sent.");
                     }
                     else
                     {
