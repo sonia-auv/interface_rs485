@@ -167,6 +167,10 @@ namespace interface_rs485
                     {
                         publisher.publish(msg);
                     }
+                    else
+                    {
+                        ROS_DEBUG("Package Dropped.");
+                    }
                 }
             }
         }
